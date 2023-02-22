@@ -2,12 +2,15 @@ from django.db import models
 from django.conf import settings
 from users.models import CustomUser
 
+from backend_foodgram import settings
+
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=settings.MAX_LENGTH_CHARFIELD,
+    name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                             verbose_name='Название')
     # quantity = models.FloatField(verbose_name='Количество')
-    measure = models.CharField(max_length=10, verbose_name='Единицы измерения')
+    measure = models.CharField(max_length=settings.MAX_LENGTH_NAME,
+                               verbose_name='Единицы измерения')
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -18,10 +21,12 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=settings.MAX_LENGTH_CHARFIELD,
+    name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                             verbose_name='Тег')
-    hex_color = models.CharField(max_length=10, verbose_name='Цвет')
-    slug = models.SlugField(unique=True, verbose_name='SLUG')
+    hex_color = models.CharField(max_length=settings.MAX_LENGTH_HEX_COLOR,
+                                 verbose_name='Цвет')
+    slug = models.SlugField(unique=True, verbose_name='SLUG',
+                            max_length=settings.MAX_LENGTH_NAME)
 
     class Meta:
         verbose_name = 'Тег'
@@ -34,8 +39,8 @@ class Tag(models.Model):
 class Recipe(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
                                verbose_name='Автор', related_name='recipes')
-    title = models.CharField(max_length=settings.MAX_LENGTH_CHARFIELD,
-                             unique=True, verbose_name='Название блюда')
+    name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
+                            unique=True, verbose_name='Название блюда')
     image = models.ImageField(verbose_name='Фото готового блюда', unique=True,
                               upload_to='recipes/')
     text = models.TextField(verbose_name='Описание приготовления блюда',
@@ -43,7 +48,9 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient, through='Quantity',
                                          related_name='recipes')
     tags = models.ManyToManyField(Tag, related_name='recipes')
-    cooking_time = models.TimeField()
+    cooking_time = models.IntegerField(
+        verbose_name='Время приготовления в минутах',
+    )
     pub_date = models.DateTimeField(verbose_name='Дата добавления рецепта',
                                     auto_now_add=True)
 
