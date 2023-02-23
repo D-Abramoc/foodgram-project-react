@@ -2,8 +2,6 @@ from django.db import models
 from django.conf import settings
 from users.models import CustomUser
 
-from backend_foodgram import settings
-
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,

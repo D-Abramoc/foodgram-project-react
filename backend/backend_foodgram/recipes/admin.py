@@ -11,10 +11,6 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = (QuantityInLine,)
 
 
-# class IngredientAdmin(admin.ModelAdmin):
-#     inlines = (QuantityInLine,)
-
-
 admin.site.register(Ingredient)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Tag)

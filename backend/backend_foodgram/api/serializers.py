@@ -1,6 +1,5 @@
 import re
 
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from recipes.models import Ingredient, Recipe, Tag
