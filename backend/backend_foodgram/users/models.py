@@ -8,7 +8,8 @@ class CustomUser(AbstractUser):
         max_length=settings.MAX_LENGTH_CHARFIELD_CUSTOMUSER,
         unique=True, verbose_name='Логин'
     )
-    email = models.EmailField(verbose_name='Электропочта')
+    email = models.EmailField(verbose_name='Электропочта',
+                              unique=True)
     first_name = models.CharField(
         max_length=settings.MAX_LENGTH_CHARFIELD_CUSTOMUSER,
         verbose_name='Имя'
