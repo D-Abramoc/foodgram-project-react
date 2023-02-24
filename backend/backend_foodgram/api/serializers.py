@@ -2,13 +2,28 @@ import re
 
 from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
 
 class CreateUserSerializer(UserCreateSerializer):
-    ...
+
+    def validate(self, attrs):
+        user = CustomUser(**attrs)
+        password = attrs.get("password")
+
+        try:
+            validate_password(password, user)
+        except ValidationError as e:
+            serializer_error = serializers.as_serializer_error(e)
+            raise serializers.ValidationError(
+                {"password": serializer_error["non_field_errors"]}
+            )
+
+        return attrs
 
 
 class CustomUserSerializer(serializers.ModelSerializer):

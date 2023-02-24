@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .serializers import (CustomUserSerializer, CustomUserPOSTSerializer,
                           ChangePasswordSerializer, IngredientSerializer,
-                          RecipeSerializer, TagSerializer)
+                          RecipeSerializer, TagSerializer, CreateUserSerializer)
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
@@ -17,7 +17,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.request.method in ('POST',):
-            return CustomUserPOSTSerializer
+            return CreateUserSerializer
         return CustomUserSerializer
 
     @action(
