@@ -1,9 +1,14 @@
 import re
 
 from rest_framework import serializers
+from djoser.serializers import UserCreateSerializer
 
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
+
+
+class CreateUserSerializer(UserCreateSerializer):
+    ...
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -56,6 +61,24 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = '__all__'
+
+    # def validate(self, attrs):
+    #     if 'ingredients' not in self.initial_data:
+    #         raise serializers.ValidationError(
+    #             'You need to add the ingredients'
+    #         )
+    #     if attrs.get('ingedients'):
+    #         raise serializers.ValidationError(
+    #             'You need to add the ingredients'
+    #         )
+    #     return super().validate(attrs)
+
+    # def validate_ingredients(self, value):
+    #     if not value:
+    #         raise serializers.ValidationError(
+    #             'You need to add the ingredients'
+    #         )
+    #     return value
 
 
 class TagSerializer(serializers.ModelSerializer):

@@ -13,7 +13,7 @@ from users.models import CustomUser
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('username')
     serializer_class = CustomUserSerializer
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         if self.request.method in ('POST',):
@@ -55,8 +55,14 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all().order_by('pub_date')
+    queryset = Recipe.objects.all().order_by('name')
     serializer_class = RecipeSerializer
+
+    # def create(self, request, *args, **kwargs):
+    #     serializer = RecipeSerializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class TagViewSet(viewsets.ModelViewSet):

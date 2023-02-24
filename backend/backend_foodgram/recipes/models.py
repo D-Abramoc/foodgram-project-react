@@ -6,7 +6,6 @@ from users.models import CustomUser
 class Ingredient(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                             verbose_name='Название')
-    # quantity = models.FloatField(verbose_name='Количество')
     measure = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                                verbose_name='Единицы измерения')
 
@@ -20,9 +19,9 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
-                            verbose_name='Тег')
-    hex_color = models.CharField(max_length=settings.MAX_LENGTH_HEX_COLOR,
-                                 verbose_name='Цвет')
+                            verbose_name='Тег', unique=True)
+    color = models.CharField(max_length=settings.MAX_LENGTH_HEX_COLOR,
+                             verbose_name='Цвет', unique=True)
     slug = models.SlugField(unique=True, verbose_name='SLUG',
                             max_length=settings.MAX_LENGTH_NAME)
 
@@ -39,8 +38,8 @@ class Recipe(models.Model):
                                verbose_name='Автор', related_name='recipes')
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                             unique=True, verbose_name='Название блюда')
-    image = models.ImageField(verbose_name='Фото готового блюда', unique=True,
-                              upload_to='recipes/')
+    image = models.ImageField(verbose_name='Фото готового блюда', unique=False,
+                              upload_to='recipes/', blank=True)
     text = models.TextField(verbose_name='Описание приготовления блюда',
                             help_text='Опишите порядок приготовления блюда')
     ingredients = models.ManyToManyField(Ingredient, through='Quantity',
@@ -49,8 +48,8 @@ class Recipe(models.Model):
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления в минутах',
     )
-    pub_date = models.DateTimeField(verbose_name='Дата добавления рецепта',
-                                    auto_now_add=True)
+    # pub_date = models.DateTimeField(verbose_name='Дата добавления рецепта',
+    #                                 auto_now_add=True)
 
     class Meta:
         verbose_name = 'Рецепт'
