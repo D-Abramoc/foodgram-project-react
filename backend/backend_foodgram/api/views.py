@@ -5,7 +5,9 @@ from rest_framework.response import Response
 
 from .serializers import (CustomUserSerializer, CustomUserPOSTSerializer,
                           ChangePasswordSerializer, IngredientSerializer,
-                          RecipeSerializer, TagSerializer, CreateUserSerializer)
+                          RecipeSerializer, TagSerializer,
+                          CreateUserSerializer)
+from .custom_pagination import PageLimitPagination
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
@@ -14,10 +16,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('username')
     serializer_class = CustomUserSerializer
     # permission_classes = (IsAuthenticated,)
+    pagination_class = PageLimitPagination
 
     def get_serializer_class(self):
         if self.request.method in ('POST',):
-            return CreateUserSerializer
+            return CustomUserPOSTSerializer
         return CustomUserSerializer
 
     @action(
