@@ -41,3 +41,10 @@ class CustomUser(AbstractUser):
     @ property
     def is_admin(self):
         return self.is_superuser or self.role == USERS_ROLE[1][0]
+
+
+class Subscribe(models.Model):
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
+                               related_name='subscribers')
+    subscriber = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
+                                   related_name='authors')

@@ -63,3 +63,14 @@ class Quantity(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.FloatField(verbose_name='Количество')
+
+
+class ShoppingCart(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+
+
+class FavoriteRecipe(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
+                             related_name='favorite_recipes')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='users')
