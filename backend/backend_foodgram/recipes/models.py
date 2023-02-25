@@ -48,12 +48,13 @@ class Recipe(models.Model):
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления в минутах',
     )
-    # pub_date = models.DateTimeField(verbose_name='Дата добавления рецепта',
-    #                                 auto_now_add=True)
+    pub_date = models.DateTimeField(verbose_name='Дата добавления рецепта',
+                                    auto_now_add=True)
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        ordering = ('-pub_date',)
 
     def __str__(self) -> str:
         return self.name

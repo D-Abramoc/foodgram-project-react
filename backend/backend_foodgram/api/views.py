@@ -60,6 +60,8 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('name')
     serializer_class = RecipeSerializer
+    pagination_class = PageLimitPagination
+    filterset_fields = ('author', 'tags')
 
     # def create(self, request, *args, **kwargs):
     #     serializer = RecipeSerializer(data=request.data)
