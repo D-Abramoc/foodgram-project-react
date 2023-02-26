@@ -13,7 +13,7 @@ class SpecialUserSerializer(UserSerializer):
     class Meta:
         model = CustomUser
         fields = tuple(CustomUser.REQUIRED_FIELDS) + (
-            CustomUser.pk, CustomUser.username
+            CustomUser.pk, CustomUser.email
         )
         read_only_fields = (CustomUser.username,)
 
