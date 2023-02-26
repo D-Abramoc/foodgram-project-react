@@ -12,13 +12,7 @@ from users.models import CustomUser
 class SpecialUserSerializer(UserSerializer):
     class Meta:
         model = CustomUser
-        fields = tuple(CustomUser.REQUIRED_FIELDS) + (
-            CustomUser.pk, CustomUser.email
-        )
-        read_only_fields = (CustomUser.username,)
-
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
+        fields = ('id', 'first_name', 'last_name', 'email', 'username')
 
 
 class CreateUserSerializer(UserCreateSerializer):

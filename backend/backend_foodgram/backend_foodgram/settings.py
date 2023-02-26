@@ -125,7 +125,7 @@ DJOSER = {
         'user': 'api.serializers.SpecialUserSerializer'
     },
     'PERMISSIONS': {
-        'user': ('rest_framework.permissions.IsAuthenticated',)
+        'user': ('rest_framework.permissions.IsAuthenticated'),
     }
 }
 # Internationalization
