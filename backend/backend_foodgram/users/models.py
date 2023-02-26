@@ -29,7 +29,8 @@ class CustomUser(AbstractUser):
     )
     role = models.CharField(max_length=15, choices=USERS_ROLE,
                             default='user', blank=True)
-    REQUIRED_FIELDS = ('first_name', 'last_name', 'email')
+    REQUIRED_FIELDS = ('first_name', 'last_name', 'username')
+    USERNAME_FIELD = 'email'
 
     def __str__(self):
         return self.username

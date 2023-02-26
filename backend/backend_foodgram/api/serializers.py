@@ -1,12 +1,24 @@
 import re
 
 from rest_framework import serializers
-from djoser.serializers import UserCreateSerializer
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
+
+
+class SpecialUserSerializer(UserSerializer):
+    class Meta:
+        model = CustomUser
+        fields = tuple(CustomUser.REQUIRED_FIELDS) + (
+            CustomUser.pk, CustomUser.username
+        )
+        read_only_fields = (CustomUser.username,)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
 
 
 class CreateUserSerializer(UserCreateSerializer):

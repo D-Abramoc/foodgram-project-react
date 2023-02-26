@@ -120,6 +120,14 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
+DJOSER = {
+    "SERIALIZERS": {
+        'user': 'api.serializers.SpecialUserSerializer'
+    },
+    'PERMISSIONS': {
+        'user': 'rest_framework.permissions.AllowAny'
+    }
+}
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
