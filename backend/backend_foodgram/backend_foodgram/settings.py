@@ -123,10 +123,10 @@ REST_FRAMEWORK = {
 DJOSER = {
     "SERIALIZERS": {
         'user': 'api.serializers.SpecialUserSerializer',
-        'current_user': 'api.serializer.SpecialUserSerializer'
+        'current_user': 'api.serializers.SpecialUserSerializer'
     },
     'PERMISSIONS': {
-        'user': ('rest_framework.permissions.IsAuthenticated'),
+        'user': ('rest_framework.permissions.IsAuthenticated',),
     }
 }
 # Internationalization
