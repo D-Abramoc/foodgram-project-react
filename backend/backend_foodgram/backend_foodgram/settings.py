@@ -115,14 +115,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'api.custom_pagination.PageLimitPagination',
     'PAGE_SIZE': 6,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 DJOSER = {
     "SERIALIZERS": {
-        'user': 'api.serializers.SpecialUserSerializer'
+        'user': 'api.serializers.SpecialUserSerializer',
+        'current_user': 'api.serializer.SpecialUserSerializer'
     },
     'PERMISSIONS': {
         'user': ('rest_framework.permissions.IsAuthenticated'),
