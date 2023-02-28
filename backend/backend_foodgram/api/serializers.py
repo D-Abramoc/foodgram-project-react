@@ -6,13 +6,31 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
 from recipes.models import Ingredient, Recipe, Tag
-from users.models import CustomUser
+from users.models import CustomUser, Subscribe
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscribe
+        fields = '__all__'
 
 
 class SpecialUserSerializer(UserSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'email', 'username')
+        fields = ('id', 'first_name', 'last_name', 'email', 'username',)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        user = self.context.get('request').user
+        subscribers = [
+            subscriber.subscriber for subscriber in user.subscribers.all()
+        ]
+        if instance in subscribers:
+            representation['is_subscribed'] = True
+            return representation
+        representation['is_subscribed'] = False
+        return representation
 
 
 class CreateUserSerializer(UserCreateSerializer):

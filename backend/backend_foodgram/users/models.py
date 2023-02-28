@@ -32,6 +32,9 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ('first_name', 'last_name', 'username')
     USERNAME_FIELD = 'email'
 
+    class Meta:
+        ordering = ('username',)
+
     def __str__(self):
         return self.username
 
