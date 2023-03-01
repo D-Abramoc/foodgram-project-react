@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,6 +8,7 @@ from .serializers import (CustomUserSerializer, CustomUserPOSTSerializer,
                           RecipeSerializer, TagSerializer,
                           CreateUserSerializer)
 from .custom_pagination import PageLimitPagination
+from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
@@ -52,10 +53,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_204_NO_CONTENT)
 
 
-class IngredientViewSet(viewsets.ModelViewSet):
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all().order_by('name')
     serializer_class = IngredientSerializer
     pagination_class = None
+    filter_backends = (IngredientFilter,)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
