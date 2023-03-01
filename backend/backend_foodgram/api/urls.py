@@ -9,7 +9,7 @@ app_name = 'api'
 router_v1 = routers.DefaultRouter()
 router_only_get = OnlyGetRouter()
 # router_v1.register(r'users', views.CustomUserViewSet, basename='users')
-router_v1.register(
+router_only_get.register(
     r'ingredients', views.IngredientViewSet, basename='ingredients'
 )
 router_v1.register(r'recipes', views.RecipeViewSet, basename='recipes')
