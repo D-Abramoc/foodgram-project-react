@@ -1,22 +1,25 @@
 from django.urls import include, re_path, path
 from rest_framework import routers
 from . import views
+from .custom_routers import OnlyGetRouter
 
 
 app_name = 'api'
 
 router_v1 = routers.DefaultRouter()
+router_only_get = OnlyGetRouter()
 # router_v1.register(r'users', views.CustomUserViewSet, basename='users')
 router_v1.register(
     r'ingredients', views.IngredientViewSet, basename='ingredients'
 )
 router_v1.register(r'recipes', views.RecipeViewSet, basename='recipes')
-router_v1.register(r'tags', views.TagViewSet, basename='tags')
+router_only_get.register(r'tags', views.TagViewSet, basename='tags')
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router_v1.urls)),
+    path('', include(router_only_get.urls)),
     path('', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
     path(
