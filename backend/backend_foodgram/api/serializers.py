@@ -96,10 +96,21 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
+
+
 class RecipeSerializer(serializers.ModelSerializer):
+    author = SpecialUserSerializer()
+    tags = TagSerializer(many=True)
+    ingredients = IngredientSerializer(many=True)
+
     class Meta:
         model = Recipe
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ('pub_date',)
 
     # def validate(self, attrs):
     #     if 'ingredients' not in self.initial_data:
@@ -118,9 +129,3 @@ class RecipeSerializer(serializers.ModelSerializer):
     #             'You need to add the ingredients'
     #         )
     #     return value
-
-
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = '__all__'
