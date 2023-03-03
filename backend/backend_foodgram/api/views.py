@@ -1,56 +1,68 @@
 from rest_framework import filters, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from djoser.views import UserViewSet
 
-from .serializers import (CustomUserSerializer, CustomUserPOSTSerializer,
-                          ChangePasswordSerializer, IngredientSerializer,
-                          RecipeSerializer, TagSerializer,
-                          CreateUserSerializer)
+from .serializers import (IngredientSerializer,
+                          RecipeSerializer, TagSerializer,)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
 
-class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all().order_by('username')
-    serializer_class = CustomUserSerializer
-    # permission_classes = (IsAuthenticated,)
-    pagination_class = PageLimitPagination
+@api_view(['GET'])
+@permission_classes([AllowAny,])
+def subscriptions(request):
+    return Response('Response from api_view')
 
-    def get_serializer_class(self):
-        if self.request.method in ('POST',):
-            return CustomUserPOSTSerializer
-        return CustomUserSerializer
 
-    @action(
-        methods=['GET', 'PATCH', ],
-        detail=False,
-        url_path='me',
-        permission_classes=[IsAuthenticated, ]
-    )
-    def me_page(self, request):
+class CustomUserViewSet(UserViewSet):
 
-        if request.method == 'GET':
-            serializer = CustomUserSerializer(request.user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        if request.method == 'PATCH':
-            serializer = CustomUserSerializer(
-                request.user, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save(role=request.user.role)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+    @action(methods=('get',), detail=True, url_path='subscriptions')
+    def subscriptions(self, request, pk):
+        return Response('Response from action')
 
-    @action(methods=('POST',), detail=False, url_name='set_password',
-            permission_classes=(IsAuthenticated,))
-    def set_password(self, request):
-        serializer = ChangePasswordSerializer(request.user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance.set_password(request.data.get('new_password'))
-        serializer.instance.save()
-        return Response('Пароль успешно изменён',
-                        status=status.HTTP_204_NO_CONTENT)
+
+# class CustomUserViewSet(viewsets.ModelViewSet):
+#     queryset = CustomUser.objects.all().order_by('username')
+#     serializer_class = CustomUserSerializer
+#     # permission_classes = (IsAuthenticated,)
+#     pagination_class = PageLimitPagination
+
+#     def get_serializer_class(self):
+#         if self.request.method in ('POST',):
+#             return CustomUserPOSTSerializer
+#         return CustomUserSerializer
+
+#     @action(
+#         methods=['GET', 'PATCH', ],
+#         detail=False,
+#         url_path='me',
+#         permission_classes=[IsAuthenticated, ]
+#     )
+#     def me_page(self, request):
+
+#         if request.method == 'GET':
+#             serializer = CustomUserSerializer(request.user)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         if request.method == 'PATCH':
+#             serializer = CustomUserSerializer(
+#                 request.user, data=request.data, partial=True)
+#             serializer.is_valid(raise_exception=True)
+#             serializer.save(role=request.user.role)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+
+#     @action(methods=('POST',), detail=False, url_name='set_password',
+#             permission_classes=(IsAuthenticated,))
+#     def set_password(self, request):
+#         serializer = ChangePasswordSerializer(request.user, data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.instance.set_password(request.data.get('new_password'))
+#         serializer.instance.save()
+#         return Response('Пароль успешно изменён',
+#                         status=status.HTTP_204_NO_CONTENT)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
