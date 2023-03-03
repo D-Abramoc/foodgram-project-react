@@ -18,7 +18,7 @@ router_only_get.register(r'tags', views.TagViewSet, basename='tags')
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('users/subscriptions/', views.subscriptions,),
+    re_path(r'^users/(?P<ip>\d+/)subscriptions/', views.subscriptions,),
     path('', include(router_v1.urls)),
     path('', include(router_only_get.urls)),
     path('', include('djoser.urls')),

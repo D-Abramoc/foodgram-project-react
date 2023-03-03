@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from djoser.views import UserViewSet
 
 from .serializers import (IngredientSerializer,
-                          RecipeSerializer, TagSerializer,)
+                          RecipeSerializer, TagSerializer,
+                          SubscribeSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag
@@ -14,15 +15,16 @@ from users.models import CustomUser
 
 @api_view(['GET'])
 @permission_classes([AllowAny,])
-def subscriptions(request):
-    return Response('Response from api_view')
+def subscriptions(request, ip):
+    serializer = SubscribeSerializer(request.user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CustomUserViewSet(UserViewSet):
+# class CustomUserViewSet(UserViewSet):
 
-    @action(methods=('get',), detail=True, url_path='subscriptions')
-    def subscriptions(self, request, pk):
-        return Response('Response from action')
+#     @action(methods=('get',), detail=True, url_path='subscriptions')
+#     def subscriptions(self, request, pk):
+#         return Response('Response from action')
 
 
 # class CustomUserViewSet(viewsets.ModelViewSet):
