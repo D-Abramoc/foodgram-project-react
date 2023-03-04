@@ -33,9 +33,12 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-@api_view(['POST'])
+@api_view(['POST', 'DELETE'])
 @permission_classes([AllowAny,])
 def subscribe(request, id):
+    if request.method == 'DELETE':
+        request.user.authors.filter(author__pk=id).delete()
+        return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
     data = {}
     data['subscriber'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
     data['author'] = get_object_or_404(CustomUser, pk=id).pk
