@@ -1,11 +1,10 @@
-from rest_framework import filters, status, viewsets
-from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from djoser.views import UserViewSet
 from django.db.models import Count
 
-from .serializers import (IngredientSerializer, SpecialUserSerializer,
+from .serializers import (IngredientSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer)
 from .custom_pagination import PageLimitPagination
@@ -74,7 +73,8 @@ def subscriptions(request):
 #     @action(methods=('POST',), detail=False, url_name='set_password',
 #             permission_classes=(IsAuthenticated,))
 #     def set_password(self, request):
-#         serializer = ChangePasswordSerializer(request.user, data=request.data)
+#         serializer = ChangePasswordSerializer(request.user,
+#                                               data=request.data)
 #         serializer.is_valid(raise_exception=True)
 #         serializer.instance.set_password(request.data.get('new_password'))
 #         serializer.instance.save()
