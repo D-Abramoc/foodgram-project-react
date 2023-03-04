@@ -3,7 +3,8 @@
 from rest_framework import serializers
 from djoser.serializers import UserSerializer
 
-from recipes.models import Ingredient, Recipe, ShoppingCart, Tag, FavoriteRecipe
+from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
+                            FavoriteRecipe)
 from users.models import CustomUser, Subscribe
 
 
