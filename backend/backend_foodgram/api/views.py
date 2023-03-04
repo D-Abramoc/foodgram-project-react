@@ -21,7 +21,10 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         authors = self.request.user.authors.all()
         authors_pk = [author.author.pk for author in authors]
-        queryset = CustomUser.objects.filter(pk__in=authors_pk).annotate(recipes_count=Count('recipes'))
+        queryset = (
+            CustomUser.objects.filter(pk__in=authors_pk)
+            .annotate(recipes_count=Count('recipes')).order_by('username')
+        )
         return queryset
 
 
