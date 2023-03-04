@@ -7,11 +7,17 @@ from django.shortcuts import get_object_or_404
 
 from .serializers import (IngredientSerializer, FavoriteSerializer,
                           RecipeSerializer, TagSerializer,
-                          SubscribeSerializer, SubscriptionsSerializer)
+                          SubscribeSerializer, SubscriptionsSerializer,
+                          ShoppingCartSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
-from recipes.models import Ingredient, Recipe, Tag
+from recipes.models import Ingredient, Recipe, Tag, ShoppingCart
 from users.models import CustomUser, Subscribe
+
+
+class ShoppingCartViewSet(viewsets.ModelViewSet):
+    queryset = ShoppingCart.objects.all().order_by('pk')
+    serializer_class = ShoppingCartSerializer
 
 
 class SubscribeUnsubscribeViewSet(viewsets.ModelViewSet):

@@ -15,6 +15,7 @@ router_only_get.register(
 router_v1.register(r'recipes', views.RecipeViewSet, basename='recipes')
 router_only_get.register(r'tags', views.TagViewSet, basename='tags')
 router_v1.register(r'subscribers', views.SubscribeUnsubscribeViewSet)
+router_v1.register(r'shopping_carts', views.ShoppingCartViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

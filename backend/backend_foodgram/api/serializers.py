@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from djoser.serializers import UserSerializer
 
-from recipes.models import Ingredient, Recipe, Tag, FavoriteRecipe
+from recipes.models import Ingredient, Recipe, ShoppingCart, Tag, FavoriteRecipe
 from users.models import CustomUser, Subscribe
 
 
@@ -149,4 +149,10 @@ class SubscribeSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteRecipe
+        fields = '__all__'
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingCart
         fields = '__all__'
