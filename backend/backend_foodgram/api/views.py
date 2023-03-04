@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
-from .serializers import (IngredientSerializer,
+from .serializers import (IngredientSerializer, FavoriteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer)
 from .custom_pagination import PageLimitPagination
@@ -43,6 +43,21 @@ def subscribe(request, id):
     data['subscriber'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
     data['author'] = get_object_or_404(CustomUser, pk=id).pk
     serializer = SubscribeSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST', 'DELETE'])
+@permission_classes([AllowAny,])
+def favorite(request, id):
+    if request.method == 'DELETE':
+        request.user.favorite_recipes.filter(recipe__pk=id).delete()
+        return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
+    data = {}
+    data['user'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
+    data['recipe'] = get_object_or_404(Recipe, pk=id).pk
+    serializer = FavoriteSerializer(data=data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)

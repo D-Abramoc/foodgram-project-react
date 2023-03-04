@@ -27,6 +27,10 @@ urlpatterns = [
         r'^users/(?P<id>\d+)/subscribe/',
         views.subscribe
     ),
+    re_path(
+        r'recipes/(?P<id>\d+)/favorite/',
+        views.favorite
+    ),
     path('', include(router_v1.urls)),
     path('', include(router_only_get.urls)),
     path('', include('djoser.urls')),
