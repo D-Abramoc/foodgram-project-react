@@ -7,12 +7,6 @@ from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser, Subscribe
 
 
-class SubscribeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subscribe
-        fields = '__all__'
-
-
 class SpecialUserSerializer(UserSerializer):
     class Meta:
         model = CustomUser
@@ -144,5 +138,9 @@ class SubscriptionsSerializer(SpecialUserSerializer):
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'recipes', 'recipes_count')
 
-    # def to_representation(self, instance):
-    #     return super().to_representation(instance)
+
+class SubscribeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subscribe
+        fields = ('id', 'author', 'subscriber')

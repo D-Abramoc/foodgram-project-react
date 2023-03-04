@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
 
 from .serializers import (IngredientSerializer,
                           RecipeSerializer, TagSerializer,
@@ -10,7 +11,12 @@ from .serializers import (IngredientSerializer,
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag
-from users.models import CustomUser
+from users.models import CustomUser, Subscribe
+
+
+class SubscribeUnsubscribeViewSet(viewsets.ModelViewSet):
+    queryset = Subscribe.objects.all()
+    serializer_class = SubscribeSerializer
 
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -27,11 +33,16 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([AllowAny,])
-def subscriptions(request):
-    serializer = SubscribeSerializer(request.user)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+def subscribe(request, id):
+    data = {}
+    data['subscriber'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
+    data['author'] = get_object_or_404(CustomUser, pk=id).pk
+    serializer = SubscribeSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # class CustomUserViewSet(UserViewSet):
