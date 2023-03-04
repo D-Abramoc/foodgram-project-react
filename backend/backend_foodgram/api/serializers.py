@@ -127,3 +127,22 @@ class RecipeSerializer(serializers.ModelSerializer):
     #             'You need to add the ingredients'
     #         )
     #     return value
+
+
+class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class SubscriptionsSerializer(SpecialUserSerializer):
+    recipes = RecipeSubscriptionsSerializer(read_only=True, many=True)
+    recipes_count = serializers.IntegerField()
+
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'first_name', 'last_name', 'email', 'username',
+                  'recipes', 'recipes_count')
+
+    # def to_representation(self, instance):
+    #     return super().to_representation(instance)

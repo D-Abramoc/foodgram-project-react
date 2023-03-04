@@ -3,19 +3,31 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from djoser.views import UserViewSet
+from django.db.models import Count
 
-from .serializers import (IngredientSerializer,
+from .serializers import (IngredientSerializer, SpecialUserSerializer,
                           RecipeSerializer, TagSerializer,
-                          SubscribeSerializer)
+                          SubscribeSerializer, SubscriptionsSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
 
+class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = SubscriptionsSerializer
+    pagination_class = PageLimitPagination
+
+    def get_queryset(self):
+        authors = self.request.user.authors.all()
+        authors_pk = [author.author.pk for author in authors]
+        queryset = CustomUser.objects.filter(pk__in=authors_pk).annotate(recipes_count=Count('recipes'))
+        return queryset
+
+
 @api_view(['GET'])
 @permission_classes([AllowAny,])
-def subscriptions(request, ip):
+def subscriptions(request):
     serializer = SubscribeSerializer(request.user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
