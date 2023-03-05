@@ -69,6 +69,7 @@ class Quantity(models.Model):
 
 class ShoppingCart(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    recipes = models.ManyToManyField(Recipe, related_name='shopping_carts')
 
 
 class FavoriteRecipe(models.Model):

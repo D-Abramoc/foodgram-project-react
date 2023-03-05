@@ -154,6 +154,15 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('id', 'recipes', 'user')
+        read_only_fields = ('user',)
+
+
+class ShoppingCartDeleteRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = '__all__'
+        read_only_fields = ('user', )

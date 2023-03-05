@@ -3,12 +3,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Count
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 from .serializers import (IngredientSerializer, FavoriteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
-                          ShoppingCartSerializer)
+                          ShoppingCartSerializer,
+                          ShoppingCartDeleteRecipeSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag, ShoppingCart
@@ -64,6 +65,33 @@ def favorite(request, id):
     data['user'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
     data['recipe'] = get_object_or_404(Recipe, pk=id).pk
     serializer = FavoriteSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST', 'DELETE'])  # сериалайзер одинаковый, надо рефачить
+@permission_classes([AllowAny,])
+def shopping_cart(request, id):
+    request.data.clear()
+    request.data['recipes'] = [
+        recipe.pk for recipe in get_list_or_404(Recipe, pk=id)
+    ]
+    if request.method == 'DELETE':
+        request.data['recipes'] = [
+            recipe.pk for recipe in
+            Recipe.objects.filter(shopping_carts__user=request.user)
+            .exclude(pk=id)
+        ]
+        serializer = ShoppingCartDeleteRecipeSerializer(
+            request.user.shoppingcart, data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
+    serializer = ShoppingCartSerializer(
+        request.user.shoppingcart, data=request.data
+    )
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
