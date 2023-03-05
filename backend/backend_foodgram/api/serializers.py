@@ -2,7 +2,7 @@ from rest_framework import serializers
 from djoser.serializers import UserSerializer
 
 from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
-                            FavoriteRecipe)
+                            FavoriteRecipe, Quantity)
 from users.models import CustomUser, Subscribe
 
 
@@ -44,6 +44,42 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         exclude = ('pub_date',)
+
+
+class QuantitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quantity
+        fields = ('quantity',)
+
+
+class IngredientAmountSerializer(serializers.ModelSerializer):
+    amount = serializers.FloatField()
+    id = serializers.PrimaryKeyRelatedField(
+        # read_only=True,
+        queryset=Ingredient.objects.all()
+    )
+
+    class Meta:
+        model = Ingredient
+        fields = ('id','amount')
+
+
+class RecipeCreateSerializer(serializers.ModelSerializer):
+    ingredients = IngredientAmountSerializer(many=True)
+
+    class Meta:
+        model = Recipe
+        exclude = ('pub_date', )
+    
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        tags = [tag.pk for tag in tags]
+        recipe.tags.set(tags)
+        # ingredients['recipe'] = recipe
+        Quantity.objects.create(recipe=recipe, **ingredients[0])
+        return recipe
 
 
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):

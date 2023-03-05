@@ -63,7 +63,7 @@ class Recipe(models.Model):
 class Quantity(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    quantity = models.FloatField(verbose_name='Количество', blank=False,
+    amount = models.FloatField(verbose_name='Количество', blank=False,
                                  null=False)
 
 

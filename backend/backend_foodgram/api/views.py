@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import (IngredientSerializer, FavoriteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
-                          ShoppingCartSerializer,
+                          ShoppingCartSerializer, RecipeCreateSerializer,
                           ShoppingCartDeleteRecipeSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
@@ -154,9 +154,13 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
     pagination_class = PageLimitPagination
     filterset_fields = ('author', 'tags')
+
+    def get_serializer_class(self):
+        if self.request.method in ('POST'):
+            return RecipeCreateSerializer
+        return RecipeSerializer
 
     # def create(self, request, *args, **kwargs):
     #     serializer = RecipeSerializer(data=request.data)
