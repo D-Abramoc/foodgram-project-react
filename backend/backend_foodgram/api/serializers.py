@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from djoser.serializers import UserSerializer
+from django.shortcuts import get_object_or_404
 
 from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
                             FavoriteRecipe, Quantity)
@@ -24,10 +25,23 @@ class SpecialUserSerializer(UserSerializer):
         return representation
 
 
+class QuantitySerializer(serializers.ModelSerializer):
+    ingredient = serializers.SlugRelatedField('name', read_only=True)
+    mesurement_unit = serializers.CharField(source='ingredient.measure',
+                                            read_only=True)
+    id = serializers.PrimaryKeyRelatedField(source='ingredient.id',
+                                            queryset=Ingredient.objects.all())
+
+    class Meta:
+        model = Quantity
+        fields = ('id', 'ingredient', 'amount', 'mesurement_unit')
+
+
 class IngredientSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ('id', 'name', 'measure')
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -39,38 +53,29 @@ class TagSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     author = SpecialUserSerializer()
     tags = TagSerializer(many=True)
-    ingredients = IngredientSerializer(many=True)
+    # ingredients = IngredientSerializer(many=True)
+    ingredients = QuantitySerializer(
+        source='quantity_set',
+        many=True
+    )
 
     class Meta:
         model = Recipe
         exclude = ('pub_date',)
 
 
-class QuantitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Quantity
-        fields = ('quantity',)
-
-
-class IngredientAmountSerializer(serializers.ModelSerializer):
+class NonModelSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     amount = serializers.FloatField()
-    id = serializers.PrimaryKeyRelatedField(
-        # read_only=True,
-        queryset=Ingredient.objects.all()
-    )
-
-    class Meta:
-        model = Ingredient
-        fields = ('id','amount')
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    ingredients = IngredientAmountSerializer(many=True)
+    ingredients = QuantitySerializer(many=True)
 
     class Meta:
         model = Recipe
         exclude = ('pub_date', )
-    
+
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
@@ -78,7 +83,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         tags = [tag.pk for tag in tags]
         recipe.tags.set(tags)
         # ingredients['recipe'] = recipe
-        Quantity.objects.create(recipe=recipe, **ingredients[0])
+        ingredient = ingredients[0]['ingredient']['id']
+        amount = ingredients[0]['amount']
+        item_of_quantity = Quantity(recipe=recipe,
+                                    ingredient=ingredient,
+                                    amount=amount)
+        item_of_quantity.save()
         return recipe
 
 
