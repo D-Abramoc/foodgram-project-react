@@ -26,10 +26,11 @@ class SpecialUserSerializer(UserSerializer):
 
 
 class QuantitySerializer(serializers.ModelSerializer):
-    ingredient = serializers.SlugRelatedField('name', read_only=True)
+    ingredient = serializers.CharField(source='ingredient.name',
+                                       read_only=True)
     mesurement_unit = serializers.CharField(source='ingredient.measure',
                                             read_only=True)
-    id = serializers.PrimaryKeyRelatedField(source='ingredient.id',
+    id = serializers.PrimaryKeyRelatedField(source='ingredient.pk',
                                             queryset=Ingredient.objects.all())
 
     class Meta:
@@ -63,6 +64,22 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         exclude = ('pub_date',)
 
+    # def create(self, validated_data):
+    #     ingredients = validated_data.pop('quantity_set')
+    #     tags = validated_data.pop('tags')
+    #     recipe = Recipe.objects.create(**validated_data)
+    #     tags = [tag.pk for tag in tags]
+    #     recipe.tags.set(tags)
+    #     # ingredients['recipe'] = recipe
+    #     ingredient = ingredients[0]['id']
+    #     ingredient = get_object_or_404(Ingredient, pk=ingredient)
+    #     amount = ingredients[0]['amount']
+    #     item_of_quantity = Quantity(recipe=recipe,
+    #                                 ingredient=ingredient,
+    #                                 amount=amount)
+    #     item_of_quantity.save()
+    #     return recipe
+
 
 class NonModelSerializer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -70,20 +87,21 @@ class NonModelSerializer(serializers.Serializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    ingredients = QuantitySerializer(many=True)
+    ingredients = QuantitySerializer(source='quantity_set', many=True)
 
     class Meta:
         model = Recipe
         exclude = ('pub_date', )
 
     def create(self, validated_data):
-        ingredients = validated_data.pop('ingredients')
+        ingredients = validated_data.pop('quantity_set')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         tags = [tag.pk for tag in tags]
         recipe.tags.set(tags)
         # ingredients['recipe'] = recipe
-        ingredient = ingredients[0]['ingredient']['id']
+        ingredient = ingredients[0]['ingredient']['pk']
+        # ingredient = get_object_or_404(Ingredient, pk=ingredient)
         amount = ingredients[0]['amount']
         item_of_quantity = Quantity(recipe=recipe,
                                     ingredient=ingredient,

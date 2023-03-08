@@ -153,6 +153,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    # serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
     pagination_class = PageLimitPagination
     filterset_fields = ('author', 'tags')
