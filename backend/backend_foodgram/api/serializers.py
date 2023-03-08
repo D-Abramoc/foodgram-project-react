@@ -70,11 +70,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         exclude = ('pub_date',)
 
 
-class NonModelSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    amount = serializers.FloatField()
-
-
 class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = QuantitySerializer(source='quantity_set', many=True)
 
