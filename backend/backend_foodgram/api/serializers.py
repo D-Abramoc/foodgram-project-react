@@ -108,6 +108,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                                     amount=amount)
         item_of_quantity.save()
         return recipe
+    
+    # def to_representation(self, instance):
+    #     serializer = RecipeCreateSerializer()
+    #     representation = super().to_representation(instance)
+    #     return representation
 
 
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
