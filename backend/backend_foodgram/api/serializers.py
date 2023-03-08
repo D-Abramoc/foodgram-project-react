@@ -25,6 +25,12 @@ class SpecialUserSerializer(UserSerializer):
         return representation
 
 
+class UserSerializerForRecipeCreateSerializer(UserSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'first_name', 'last_name', 'email', 'username')
+
+
 class QuantitySerializer(serializers.ModelSerializer):
     ingredient = serializers.CharField(source='ingredient.name',
                                        read_only=True)
@@ -52,9 +58,8 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    author = SpecialUserSerializer()
+    author = UserSerializerForRecipeCreateSerializer()
     tags = TagSerializer(many=True)
-    # ingredients = IngredientSerializer(many=True)
     ingredients = QuantitySerializer(
         source='quantity_set',
         many=True
@@ -63,22 +68,6 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         exclude = ('pub_date',)
-
-    # def create(self, validated_data):
-    #     ingredients = validated_data.pop('quantity_set')
-    #     tags = validated_data.pop('tags')
-    #     recipe = Recipe.objects.create(**validated_data)
-    #     tags = [tag.pk for tag in tags]
-    #     recipe.tags.set(tags)
-    #     # ingredients['recipe'] = recipe
-    #     ingredient = ingredients[0]['id']
-    #     ingredient = get_object_or_404(Ingredient, pk=ingredient)
-    #     amount = ingredients[0]['amount']
-    #     item_of_quantity = Quantity(recipe=recipe,
-    #                                 ingredient=ingredient,
-    #                                 amount=amount)
-    #     item_of_quantity.save()
-    #     return recipe
 
 
 class NonModelSerializer(serializers.Serializer):
@@ -99,9 +88,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         tags = [tag.pk for tag in tags]
         recipe.tags.set(tags)
-        # ingredients['recipe'] = recipe
         ingredient = ingredients[0]['ingredient']['pk']
-        # ingredient = get_object_or_404(Ingredient, pk=ingredient)
         amount = ingredients[0]['amount']
         item_of_quantity = Quantity(recipe=recipe,
                                     ingredient=ingredient,
@@ -109,10 +96,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         item_of_quantity.save()
         return recipe
     
-    # def to_representation(self, instance):
-    #     serializer = RecipeCreateSerializer()
-    #     representation = super().to_representation(instance)
-    #     return representation
+    def to_representation(self, instance):
+        serializer = RecipeSerializer()
+        return serializer.to_representation(instance)
 
 
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
