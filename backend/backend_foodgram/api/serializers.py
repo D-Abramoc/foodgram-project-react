@@ -88,12 +88,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         tags = [tag.pk for tag in tags]
         recipe.tags.set(tags)
-        ingredient = ingredients[0]['ingredient']['pk']
-        amount = ingredients[0]['amount']
-        item_of_quantity = Quantity(recipe=recipe,
+        for ingredient in ingredients:
+            ingredient, amount = ingredient.items()
+            ingredient = ingredient[1]['pk']
+            amount = amount[1]
+            item_of_quantity = Quantity(recipe=recipe,
                                     ingredient=ingredient,
                                     amount=amount)
-        item_of_quantity.save()
+            item_of_quantity.save()
         return recipe
     
     def to_representation(self, instance):
