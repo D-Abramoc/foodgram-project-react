@@ -12,8 +12,8 @@ from .serializers import (IngredientSerializer, FavoriteSerializer,
                           ShoppingCartDeleteRecipeSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
-from recipes.models import Ingredient, Recipe, Tag, ShoppingCart
-from users.models import CustomUser, Subscribe
+from recipes.models import Ingredient, Recipe, Tag
+from users.models import CustomUser
 
 
 # class ShoppingCartViewSet(viewsets.ModelViewSet):

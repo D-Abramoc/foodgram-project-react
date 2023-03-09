@@ -84,7 +84,23 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FavoriteSerializer(serializers.ModelSerializer):
+    user = serializers.ImageField(source='user.pk', required=False)
+    recipe = serializers.IntegerField(source='recipe.pk', required=False)
+
+    class Meta:
+        model = FavoriteRecipe
+        fields = '__all__'
+    
+    def to_representation(self, instance):
+        currentuser = self.context.get('request').user
+        if instance.instance.users.filter(user=currentuser):
+            return True
+        return False
+
+
 class RecipeSerializer(serializers.ModelSerializer):
+    is_favorited = FavoriteSerializer(source='users', default=False)
     author = SpecialUserSerializer()
     tags = TagSerializer(many=True)
     ingredients = QuantitySerializer(
@@ -148,10 +164,6 @@ class SubscribeSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'subscriber')
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FavoriteRecipe
-        fields = '__all__'
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
