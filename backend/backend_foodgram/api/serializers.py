@@ -81,7 +81,24 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return False
 
 
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    recipes = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('id', 'recipes', 'user')
+        read_only_fields = ('user',)
+
+    def to_representation(self, instance):
+        currentuser = self.context.get('request').user
+        if instance.instance.shopping_carts.filter(user=currentuser):
+            return True
+        return False
+
+
 class RecipeSerializer(serializers.ModelSerializer):
+    is_in_shoppingcart = ShoppingCartSerializer(source='shopping_carts')
     is_favorited = FavoriteSerializer(source='users')
     author = SpecialUserSerializer()
     tags = TagSerializer(many=True)
@@ -122,6 +139,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         serializer = RecipeSerializer(context=self.context)
         representation = serializer.to_representation(instance)
         representation.pop('is_favorited')
+        representation.pop('is_in_shoppingcart')
         return representation
 
 
@@ -146,18 +164,3 @@ class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribe
         fields = ('id', 'author', 'subscriber')
-
-
-class ShoppingCartSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ShoppingCart
-        fields = ('id', 'recipes', 'user')
-        read_only_fields = ('user',)
-
-
-class ShoppingCartDeleteRecipeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ShoppingCart
-        fields = '__all__'
-        read_only_fields = ('user', )
