@@ -91,7 +91,7 @@ def shopping_cart(request, id):
         serializer.save()
         return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
     serializer = ShoppingCartSerializer(
-        request.user.shoppingcart, data=request.data
+        request.user.shoppingcart, data=request.data, context={'request': request}
     )
     serializer.is_valid(raise_exception=True)
     serializer.save()
@@ -106,7 +106,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    # parser_classes = (MultiPartParser, FormParser)
     queryset = Recipe.objects.all()
     pagination_class = PageLimitPagination
     filterset_fields = ('author', 'tags')
