@@ -7,28 +7,55 @@ from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
 from users.models import CustomUser, Subscribe
 
 
-class SpecialUserSerializer(UserSerializer):
+class SubscribeSerializer(serializers.ModelSerializer):
+    author = serializers.IntegerField(source='author.pk', required=False)
+    subscriber = serializers.IntegerField(source='subscriber.pk', required=False)
+
     class Meta:
-        model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'email', 'username',)
+        model = Subscribe
+        fields = '__all__'
 
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        user = self.context.get('request').user
-        subscribers = [
-            subscriber.subscriber for subscriber in user.subscribers.all()
-        ]
-        if instance in subscribers:
-            representation['is_subscribed'] = True
-            return representation
-        representation['is_subscribed'] = False
-        return representation
+        currentuser = self.context.get('request').user
+        # subscribers = [
+        #     subscriber.subscriber for subscriber in currentuser.subscribers.all()
+        # ]
+        if instance.instance.subscribers.filter(subscriber=currentuser):
+            return True
+        return False
+
+
+class SpecialUserSerializer(UserSerializer):
+    is_subscribed = SubscribeSerializer(source='subscribers', default=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'first_name', 'last_name', 'email', 'username',
+                  'is_subscribed')
+
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     user = self.context.get('request').user
+    #     subscribers = [
+    #         subscriber.subscriber for subscriber in user.subscribers.all()
+    #     ]
+    #     if instance in subscribers:
+    #         representation['is_subscribed'] = True
+    #         return representation
+    #     representation['is_subscribed'] = False
+    #     return representation
 
 
 class UserSerializerForRecipeCreateSerializer(UserSerializer):
+    is_subscribed = SubscribeSerializer(source='subscribers')
+
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'email', 'username')
+        fields = ('id', 'first_name', 'last_name', 'email', 'username',
+                  'is_subscribed')
+    
+    # def get_is_subscribed(self, obj):
+    #     return obj.first_name
 
 
 class QuantitySerializer(serializers.ModelSerializer):
@@ -58,7 +85,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    author = UserSerializerForRecipeCreateSerializer()
+    author = SpecialUserSerializer()
     tags = TagSerializer(many=True)
     ingredients = QuantitySerializer(
         source='quantity_set',
@@ -94,7 +121,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
     
     def to_representation(self, instance):
-        serializer = RecipeSerializer()
+        serializer = RecipeSerializer(context=self.context)
         return serializer.to_representation(instance)
 
 
