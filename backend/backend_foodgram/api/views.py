@@ -14,6 +14,8 @@ from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 # class ShoppingCartViewSet(viewsets.ModelViewSet):
 #     queryset = ShoppingCart.objects.all().order_by('pk')
@@ -104,6 +106,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    parser_classes = (MultiPartParser, FormParser)
     queryset = Recipe.objects.all()
     pagination_class = PageLimitPagination
     filterset_fields = ('author', 'tags')

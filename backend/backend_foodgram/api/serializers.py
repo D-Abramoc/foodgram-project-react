@@ -1,9 +1,21 @@
+import base64
+
+from django.core.files.base import ContentFile
 from rest_framework import serializers
 from djoser.serializers import UserSerializer
 
 from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
                             FavoriteRecipe, Quantity)
 from users.models import CustomUser, Subscribe
+
+
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:image'):
+            forma, imgstr = data.split(';base64,')
+            ext = forma.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+        return super().to_internal_value(data)
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
@@ -98,6 +110,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(required=False, allow_null=True)
     is_in_shoppingcart = ShoppingCartSerializer(source='shopping_carts')
     is_favorited = FavoriteSerializer(source='users')
     author = SpecialUserSerializer()

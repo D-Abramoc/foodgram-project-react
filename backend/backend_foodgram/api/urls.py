@@ -3,6 +3,9 @@ from rest_framework import routers
 from . import views
 from .custom_routers import OnlyGetRouter
 
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 app_name = 'api'
 
@@ -40,4 +43,4 @@ urlpatterns = [
     path(
         'api-auth/', include('rest_framework.urls', namespace='rest_framework')
     )
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
