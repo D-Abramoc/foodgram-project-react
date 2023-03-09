@@ -88,8 +88,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             ingredient = ingredient[1]['pk']
             amount = amount[1]
             item_of_quantity = Quantity(recipe=recipe,
-                                    ingredient=ingredient,
-                                    amount=amount)
+                                        ingredient=ingredient,
+                                        amount=amount)
             item_of_quantity.save()
         return recipe
     
