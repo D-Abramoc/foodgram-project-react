@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from djoser.serializers import UserSerializer
-from django.shortcuts import get_object_or_404
 
 from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
                             FavoriteRecipe, Quantity)
@@ -9,7 +8,8 @@ from users.models import CustomUser, Subscribe
 
 class SubscribeSerializer(serializers.ModelSerializer):
     author = serializers.IntegerField(source='author.pk', required=False)
-    subscriber = serializers.IntegerField(source='subscriber.pk', required=False)
+    subscriber = serializers.IntegerField(source='subscriber.pk',
+                                          required=False)
 
     class Meta:
         model = Subscribe
@@ -17,33 +17,18 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         currentuser = self.context.get('request').user
-        # subscribers = [
-        #     subscriber.subscriber for subscriber in currentuser.subscribers.all()
-        # ]
         if instance.instance.subscribers.filter(subscriber=currentuser):
             return True
         return False
 
 
 class SpecialUserSerializer(UserSerializer):
-    is_subscribed = SubscribeSerializer(source='subscribers', default=False)
+    is_subscribed = SubscribeSerializer(source='subscribers')
 
     class Meta:
         model = CustomUser
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'is_subscribed')
-
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     user = self.context.get('request').user
-    #     subscribers = [
-    #         subscriber.subscriber for subscriber in user.subscribers.all()
-    #     ]
-    #     if instance in subscribers:
-    #         representation['is_subscribed'] = True
-    #         return representation
-    #     representation['is_subscribed'] = False
-    #     return representation
 
 
 class UserSerializerForRecipeCreateSerializer(UserSerializer):
@@ -53,9 +38,6 @@ class UserSerializerForRecipeCreateSerializer(UserSerializer):
         model = CustomUser
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'is_subscribed')
-    
-    # def get_is_subscribed(self, obj):
-    #     return obj.first_name
 
 
 class QuantitySerializer(serializers.ModelSerializer):
@@ -91,7 +73,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteRecipe
         fields = '__all__'
-    
+
     def to_representation(self, instance):
         currentuser = self.context.get('request').user
         if instance.instance.users.filter(user=currentuser):
@@ -100,7 +82,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    is_favorited = FavoriteSerializer(source='users', default=False)
+    is_favorited = FavoriteSerializer(source='users')
     author = SpecialUserSerializer()
     tags = TagSerializer(many=True)
     ingredients = QuantitySerializer(
@@ -135,10 +117,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                                         amount=amount)
             item_of_quantity.save()
         return recipe
-    
+
     def to_representation(self, instance):
         serializer = RecipeSerializer(context=self.context)
-        return serializer.to_representation(instance)
+        representation = serializer.to_representation(instance)
+        representation.pop('is_favorited')
+        return representation
 
 
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
@@ -162,8 +146,6 @@ class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribe
         fields = ('id', 'author', 'subscriber')
-
-
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
