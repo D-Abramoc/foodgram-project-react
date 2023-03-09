@@ -106,7 +106,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    parser_classes = (MultiPartParser, FormParser)
+    # parser_classes = (MultiPartParser, FormParser)
     queryset = Recipe.objects.all()
     pagination_class = PageLimitPagination
     filterset_fields = ('author', 'tags')
