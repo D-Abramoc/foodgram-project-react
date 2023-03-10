@@ -8,23 +8,12 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import (IngredientSerializer, FavoriteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
-                          ShoppingCartSerializer, RecipeCreateSerializer)
+                          RecipeCreateSerializer,
+                          ShoppingCartPostDeleteSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
-
-from rest_framework.parsers import MultiPartParser, FormParser
-
-
-# class ShoppingCartViewSet(viewsets.ModelViewSet):
-#     queryset = ShoppingCart.objects.all().order_by('pk')
-#     serializer_class = ShoppingCartSerializer
-
-
-# class SubscribeUnsubscribeViewSet(viewsets.ModelViewSet):
-#     queryset = Subscribe.objects.all()
-#     serializer_class = SubscribeSerializer
 
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -84,14 +73,17 @@ def shopping_cart(request, id):
             Recipe.objects.filter(shopping_carts__user=request.user)
             .exclude(pk=id)
         ]
-        serializer = ShoppingCartSerializer(
-            request.user.shoppingcart, data=request.data
+        serializer = ShoppingCartPostDeleteSerializer(
+            request.user.shoppingcart, data=request.data,
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
-    serializer = ShoppingCartSerializer(
-        request.user.shoppingcart, data=request.data, context={'request': request}
+        return Response('Рецепт успешно удалён из списка',
+                        status=status.HTTP_204_NO_CONTENT)
+    serializer = ShoppingCartPostDeleteSerializer(
+        request.user.shoppingcart, data=request.data,
+        context={'request': request}
     )
     serializer.is_valid(raise_exception=True)
     serializer.save()

@@ -109,6 +109,32 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         return False
 
 
+class ShoppingCartPostDeleteSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, default=serializers.CurrentUserDefault()
+    )
+    # recipes = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('id', 'recipes', 'user')
+
+    def update(self, instance, validated_data):
+        if self.context.get('request').method == 'DELETE':
+            set_recipe = [
+                recipe.pk for recipe in validated_data.get('recipes')
+            ]
+            instance.recipes.set(set_recipe)
+            return instance
+        add_recipe = validated_data.get('recipes')[0].pk
+        instance.recipes.add(add_recipe)
+        return instance
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return representation
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     is_in_shoppingcart = ShoppingCartSerializer(source='shopping_carts')
     is_favorited = FavoriteSerializer(source='users')
