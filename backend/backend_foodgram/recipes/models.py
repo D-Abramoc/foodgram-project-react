@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from users.models import CustomUser
 
+from .validators import validate_cooking_time
+
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
@@ -47,6 +49,7 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(Tag, related_name='recipes')
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления в минутах',
+        validators=(validate_cooking_time, )
     )
     pub_date = models.DateTimeField(verbose_name='Дата добавления рецепта',
                                     auto_now_add=True)
