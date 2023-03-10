@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import (IngredientSerializer, FavoriteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
-                          RecipeCreateSerializer,
+                          RecipeCreateSerializer, SimpleRecipeSerializer,
                           ShoppingCartPostDeleteSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import IngredientFilter
@@ -87,6 +87,9 @@ def shopping_cart(request, id):
     )
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    data = Recipe.objects.filter(pk__in=serializer.data.get('recipes'))
+    serializer = SimpleRecipeSerializer(many=True, data=data)
+    serializer.is_valid()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
