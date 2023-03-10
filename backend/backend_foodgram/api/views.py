@@ -106,9 +106,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_fields = ('author', 'tags')
 
     def get_serializer_class(self):
-        if self.request.method in ('POST'):
+        if self.request.method in ('POST', 'PATCH'):
             return RecipeCreateSerializer
         return RecipeSerializer
+
+    # def get_queryset(self):
+    #     if self.request.method in ('PATCH',):
+    #         return Recipe.objects.filter(pk=self.kwargs.get('pk'))
+    #     return super().get_queryset()
 
 
 class TagViewSet(viewsets.ModelViewSet):

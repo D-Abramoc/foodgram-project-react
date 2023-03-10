@@ -148,6 +148,24 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             item_of_quantity.save()
         return recipe
 
+    def update(self, instance, validated_data):
+        instance.quantity_set.all().delete()
+        ingredients = validated_data.pop('quantity_set')
+        tags = validated_data.pop('tags')
+        Recipe.objects.filter(pk=instance.pk).update(**validated_data)
+        recipe = Recipe.objects.get(pk=instance.pk)
+        tags = [tag.pk for tag in tags]
+        recipe.tags.set(tags)
+        for ingredient in ingredients:
+            ingredient, amount = ingredient.items()
+            ingredient = ingredient[1]['pk']
+            amount = amount[1]
+            item_of_quantity = Quantity(recipe=recipe,
+                                        ingredient=ingredient,
+                                        amount=amount)
+            item_of_quantity.save()
+        return recipe
+
     def to_representation(self, instance):
         serializer = RecipeSerializer(context=self.context)
         representation = serializer.to_representation(instance)
