@@ -6,6 +6,7 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 from .serializers import (IngredientSerializer, FavoriteSerializer,
+                          FavoritePostDeleteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
                           RecipeCreateSerializer, SimpleRecipeSerializer,
@@ -52,9 +53,13 @@ def favorite(request, id):
         request.user.favorite_recipes.filter(recipe__pk=id).delete()
         return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
     data = {}
-    data['user'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
-    data['recipe'] = get_object_or_404(Recipe, pk=id).pk
-    serializer = FavoriteSerializer(data=data)
+    # data['user'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
+    # data['recipe'] = [recipe.pk for recipe in Recipe.objects.filter(pk=id)]
+    # data['recipe'] = Recipe.objects.get(pk=id)
+    data['recipe'] = id
+    serializer = FavoritePostDeleteSerializer(
+        data=data, context={'request': request}
+    )
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
