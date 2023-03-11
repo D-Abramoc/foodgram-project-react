@@ -236,9 +236,9 @@ class ShoppingCartPostDeleteSerializer(serializers.ModelSerializer):
 
 class FavoritePostDeleteSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.all(), default=serializers.CurrentUserDefault()
+        queryset=CustomUser.objects.all(),
+        default=serializers.CurrentUserDefault()
     )
-    # recipes = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = FavoriteRecipe

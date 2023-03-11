@@ -5,14 +5,15 @@ from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, get_list_or_404
 
-from .serializers import (IngredientSerializer, FavoriteSerializer,
+from .serializers import (IngredientSerializer,
                           FavoritePostDeleteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
                           RecipeCreateSerializer, SimpleRecipeSerializer,
                           ShoppingCartPostDeleteSerializer)
 from .custom_pagination import PageLimitPagination
-from .custom_filters import IngredientFilter
+from .custom_filters import (IngredientFilter, IsFavoritedFilter,
+                             IsINShoppingcartFilter)
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
@@ -108,6 +109,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = PageLimitPagination
+    filter_backends = (IsFavoritedFilter, IsINShoppingcartFilter)
     filterset_fields = ('author', 'tags')
 
     def get_serializer_class(self):
