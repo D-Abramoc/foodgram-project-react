@@ -1,5 +1,8 @@
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError
+from django_filters.rest_framework import CharFilter, FilterSet
+
+from recipes.models import Tag
 
 
 class IngredientFilter(filters.BaseFilterBackend):
@@ -43,3 +46,11 @@ class IsINShoppingcartFilter(filters.BaseFilterBackend):
             return queryset
         queryset = queryset.filter(shopping_carts__user=request.user)
         return queryset
+
+
+class TagFilter(FilterSet):
+    tags = CharFilter(field_name='tags__name')
+
+    class Meta:
+        model = Tag
+        fields = ('tags',)

@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import (IngredientSerializer,
                           FavoritePostDeleteSerializer,
@@ -13,7 +14,7 @@ from .serializers import (IngredientSerializer,
                           ShoppingCartPostDeleteSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import (IngredientFilter, IsFavoritedFilter,
-                             IsINShoppingcartFilter)
+                             IsINShoppingcartFilter, TagFilter)
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
@@ -109,8 +110,9 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = PageLimitPagination
-    filter_backends = (IsFavoritedFilter, IsINShoppingcartFilter)
-    filterset_fields = ('author', 'tags')
+    filter_backends = (DjangoFilterBackend, IsFavoritedFilter,
+                       IsINShoppingcartFilter, TagFilter)
+    filterset_fields = ('author', )
 
     def get_serializer_class(self):
         if self.request.method in ('POST', 'PATCH'):
