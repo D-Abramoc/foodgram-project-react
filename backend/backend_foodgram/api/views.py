@@ -52,16 +52,16 @@ def favorite(request, id):
     if request.method == 'DELETE':
         request.user.favorite_recipes.filter(recipe__pk=id).delete()
         return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
-    data = {}
-    # data['user'] = get_object_or_404(CustomUser, pk=request.user.pk).pk
-    # data['recipe'] = [recipe.pk for recipe in Recipe.objects.filter(pk=id)]
-    # data['recipe'] = Recipe.objects.get(pk=id)
-    data['recipe'] = id
+    request.data.clear()
+    request.data['recipe'] = id
     serializer = FavoritePostDeleteSerializer(
-        data=data, context={'request': request}
+        data=request.data, context={'request': request}
     )
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    data = Recipe.objects.filter(pk=serializer.data.get('recipe'))
+    serializer = SimpleRecipeSerializer(many=True, data=data)
+    serializer.is_valid()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
