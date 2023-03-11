@@ -2,7 +2,7 @@ from rest_framework import filters
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import CharFilter, FilterSet
 
-from recipes.models import Tag
+from recipes.models import Recipe
 
 
 class IngredientFilter(filters.BaseFilterBackend):
@@ -49,8 +49,8 @@ class IsINShoppingcartFilter(filters.BaseFilterBackend):
 
 
 class TagFilter(FilterSet):
-    tags = CharFilter(field_name='tags__name')
+    tags = CharFilter(field_name='tags__slug')
 
     class Meta:
-        model = Tag
+        model = Recipe
         fields = ('tags',)
