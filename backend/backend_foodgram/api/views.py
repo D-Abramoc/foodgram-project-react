@@ -1,12 +1,14 @@
-from rest_framework import status, viewsets, filters
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
+from djoser.serializers import UserSerializer
 
-from .serializers import (IngredientSerializer,
+from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
                           FavoritePostDeleteSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
@@ -15,8 +17,17 @@ from .serializers import (IngredientSerializer,
 from .custom_pagination import PageLimitPagination
 from .custom_filters import (IngredientFilter, IsFavoritedFilter,
                              IsINShoppingcartFilter, TagFilter)
+from .permissions import IsOwnerOrAdminOrReadOnly
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
+
+
+class CustomUserViewSet(UserViewSet):
+
+    def get_serializer_class(self):
+        if self.request.user.is_anonymous:
+            return UserSerializer
+        return super().get_serializer_class()
 
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -110,14 +121,16 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = PageLimitPagination
+    permission_classes = (IsOwnerOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, IsFavoritedFilter,
                        IsINShoppingcartFilter)
-    filterset_fields = ('author', )
     filterset_class = TagFilter
 
     def get_serializer_class(self):
         if self.request.method in ('POST', 'PATCH'):
             return RecipeCreateSerializer
+        if self.request.user.is_anonymous:
+            return AnonimusRecipeSerializer
         return RecipeSerializer
 
     # def get_queryset(self):

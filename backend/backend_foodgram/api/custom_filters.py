@@ -50,7 +50,8 @@ class IsINShoppingcartFilter(filters.BaseFilterBackend):
 
 class TagFilter(FilterSet):
     tags = CharFilter(field_name='tags__slug')
+    author = CharFilter(field_name='author__id')
 
     class Meta:
         model = Recipe
-        fields = ('tags',)
+        fields = ('tags', 'author')

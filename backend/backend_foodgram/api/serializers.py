@@ -125,6 +125,10 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(
+        default=serializers.CurrentUserDefault(),
+        read_only=True
+    )
     ingredients = QuantitySerializer(source='quantity_set', many=True)
     image = Base64ImageField(required=False)
 
@@ -135,6 +139,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('quantity_set')
         tags = validated_data.pop('tags')
+        validated_data['author'] = self.context.get('request').user
         recipe = Recipe.objects.create(**validated_data)
         tags = [tag.pk for tag in tags]
         recipe.tags.set(tags)
@@ -207,9 +212,21 @@ class SimpleRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
-    def to_representation(self, instance):
+    def to_representation(self, instance):  # Удалить при рефакторинге
         repres = super().to_representation(instance)
         return repres
+
+
+class AnonimusRecipeSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    image = Base64ImageField(read_only=True)
+    cooking_time = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time', 'author', 'text')
 
 
 class ShoppingCartPostDeleteSerializer(serializers.ModelSerializer):
