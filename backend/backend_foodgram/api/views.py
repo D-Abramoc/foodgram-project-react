@@ -1,6 +1,6 @@
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -24,6 +24,18 @@ from users.models import CustomUser
 
 class CustomUserViewSet(UserViewSet):
 
+    @action(
+        methods=['GET', 'PATCH', ],
+        detail=False,
+        url_path='me',
+        permission_classes=[IsAuthenticated, ]
+    )
+    def me(self, request):
+
+        if request.method == 'GET':
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
     def get_serializer_class(self):
         if self.request.user.is_anonymous:
             return UserSerializer
@@ -33,6 +45,7 @@ class CustomUserViewSet(UserViewSet):
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubscriptionsSerializer
     pagination_class = PageLimitPagination
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         authors = self.request.user.authors.all()
