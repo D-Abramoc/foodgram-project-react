@@ -6,11 +6,11 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from djoser.serializers import UserSerializer
+from djoser.serializers import UserSerializer, UserCreateSerializer
 
 from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
-                          FavoritePostDeleteSerializer,
-                          RecipeSerializer, TagSerializer,
+                          FavoritePostDeleteSerializer, CustomUserCreateSerializer,
+                          RecipeSerializer, TagSerializer, SpecialUserSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
                           RecipeCreateSerializer, SimpleRecipeSerializer,
                           ShoppingCartPostDeleteSerializer)
@@ -38,6 +38,8 @@ class CustomUserViewSet(UserViewSet):
 
     def get_serializer_class(self):
         if self.request.user.is_anonymous:
+            if self.request.method == 'POST':
+                return CustomUserCreateSerializer
             return UserSerializer
         return super().get_serializer_class()
 

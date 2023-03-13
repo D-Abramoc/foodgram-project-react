@@ -9,6 +9,12 @@ from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
 from users.models import CustomUser, Subscribe
 
 
+class CustomUserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+
+
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):

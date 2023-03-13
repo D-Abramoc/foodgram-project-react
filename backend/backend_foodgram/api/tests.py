@@ -66,3 +66,28 @@ class APITest(TestCase):
                     (f'Address {address} '
                      f'return status {response.status_code}')
                 )
+
+    def test_registration_user(self):
+        """
+        Регистрация пользователя
+        """
+        number_of_users = CustomUser.objects.count()
+        data = {
+            'first_name': 'Jack',
+            'last_name': 'Sparrow',
+            'username': 'pirat',
+            'email': 'pirat@fake.fake',
+            'password': 'pass__word'
+        }
+        self.client.post(
+            '/api/users/', data=data
+        )
+        self.assertEqual(CustomUser.objects.count(), number_of_users + 1)
+        data = {
+            'email': 'pirat@fake.fake',
+            'password': 'pass__word'
+        }
+        response = self.client.post(
+            '/api/auth/token/login/', data=data
+        )
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
