@@ -69,7 +69,7 @@ class APITest(TestCase):
 
     def test_registration_user(self):
         """
-        Регистрация пользователя
+        Регистрация пользователя и получение токена
         """
         number_of_users = CustomUser.objects.count()
         data = {
@@ -90,4 +90,4 @@ class APITest(TestCase):
         response = self.client.post(
             '/api/auth/token/login/', data=data
         )
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
