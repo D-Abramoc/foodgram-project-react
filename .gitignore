@@ -1,3 +1,4 @@
+*.zip
 migrations
 media
 .vscode
