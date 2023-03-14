@@ -12,95 +12,88 @@ class APITest(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user = CustomUser.objects.create(
-            first_name='First',
-            last_name='Last_1',
-            username='first_last',
-            email='f@fake.fake'
-        )
-        # bulk_users = []
-        # fields = ('first_name', 'last_name', 'username', 'email', 'password')
-        # for i in range(1, 30):
-        #     data = (f'Name{i}', f'Surname{i}', f'username{i}',
-        #             f'mail{i}@fake.fake', 'pass__word{i}')
-        #     data_for_create = dict(zip(fields, data))
-        #     user = CustomUser.objects.create(**data_for_create)
-        #     bulk_users.append(user)
-        # CustomUser.objects.bulk_create(bulk_users)
+        bulk_users = []
+        fields = ('first_name', 'last_name', 'username', 'email', 'password')
+        for i in range(1, 30):
+            data = (f'Name{i}', f'Surname{i}', f'username{i}',
+                    f'mail{i}@fake.fake', 'pass__word{i}')
+            data_for_create = dict(zip(fields, data))
+            user = CustomUser(**data_for_create)
+            bulk_users.append(user)
+        CustomUser.objects.bulk_create(bulk_users)
         cls.tag = Tag.objects.create(
             name='test_tag_1',
             color='#000000',
             slug='slug1'
         )
-        # bulk_tag = []
-        # fields = ('name', 'color', 'slug')
-        # for i in range(1, 4):
-        #     data = (f'tag{i}', f'#00000{i}', f'slug_{i}')
-        #     data_for_create = dict(zip(fields, data))
-        #     tag = Tag(**data_for_create)
-        #     bulk_tag.append(tag)
-        # Tag.objects.bulk_create(bulk_tag)
+        bulk_tag = []
+        fields = ('name', 'color', 'slug')
+        for i in range(1, 4):
+            data = (f'tag{i}', f'#00000{i}', f'slug_{i}')
+            data_for_create = dict(zip(fields, data))
+            tag = Tag(**data_for_create)
+            bulk_tag.append(tag)
+        Tag.objects.bulk_create(bulk_tag)
         cls.ingredient = Ingredient.objects.create(
             name='kakaxa',
             measure='kg'
         )
-        # bulk_ingredient = []
-        # fields = ('name', 'measure')
-        # for i in range(1, 61):
-        #     data = (f'ingredient{i}', 'kg')
-        #     data_for_create = dict(zip(fields, data))
-        #     ingredient = Ingredient(**data_for_create)
-        #     bulk_ingredient.append(ingredient)
-        # Ingredient.objects.bulk_create(bulk_ingredient)
-        cls.recipe = Recipe.objects.create(
-            author=cls.user,
-            name='Recipe 1',
-            text='Text',
-            cooking_time=5
-        )
-        # bulc_recipe = []
-        # fields = ('author', 'name', 'text', 'cooking_time')
-        # for i in range(2, 20):
-        #     data = (CustomUser.objects.get(pk=i), f'Recipe{i}', 'Text{i}', i)
-        #     data_for_create = dict(zip(fields, data))
-        #     recipe = Recipe(**data_for_create)
-        #     bulc_recipe.append(recipe)
-        # Recipe.objects.bulk_create(bulc_recipe)
-        # for i in Recipe.objects.all():
-        #     Quantity.objects.create(
-        #         recipe=i,
-        #         ingredient=Ingredient.objects.get(pk=i.pk),
-        #         amount=100
-        #     )
-        #     Quantity.objects.create(
-        #         recipe=i,
-        #         ingredient=Ingredient.objects.get(pk=i.pk + 1),
-        #         amount=150
-        #     )
-        #     ingredients = (Ingredient.objects.get(pk=i.pk).pk,
-        #                    Ingredient.objects.get(pk=i.pk+1).pk)
-        #     i.ingredients.set(ingredients)
-        #     i.tags.set(Tag.objects.filter(pk=cls.tag.pk))
+        bulk_ingredient = []
+        fields = ('name', 'measure')
+        for i in range(1, 61):
+            data = (f'ingredient{i}', 'kg')
+            data_for_create = dict(zip(fields, data))
+            ingredient = Ingredient(**data_for_create)
+            bulk_ingredient.append(ingredient)
+        Ingredient.objects.bulk_create(bulk_ingredient)
+        bulk_recipe = []
+        fields = ('author', 'name', 'text', 'cooking_time')
+        for i in range(2, 20):
+            data = (CustomUser.objects.get(pk=i), f'Recipe{i}', 'Text{i}', i)
+            data_for_create = dict(zip(fields, data))
+            recipe = Recipe(**data_for_create)
+            bulk_recipe.append(recipe)
+        Recipe.objects.bulk_create(bulk_recipe)
+        for i in Recipe.objects.all():
+            Quantity.objects.create(
+                recipe=i,
+                ingredient=Ingredient.objects.get(pk=i.pk),
+                amount=100
+            )
+            Quantity.objects.create(
+                recipe=i,
+                ingredient=Ingredient.objects.get(pk=i.pk + 1),
+                amount=150
+            )
+            ingredients = (Ingredient.objects.get(pk=i.pk).pk,
+                           Ingredient.objects.get(pk=i.pk+1).pk)
+            i.ingredients.set(ingredients)
+            i.tags.set(Tag.objects.filter(pk=cls.tag.pk))
 
     def setUp(self):
+        user = CustomUser.objects.first()
         self.auth_client = Client()
-        self.auth_client.force_login(self.user)
+        self.auth_client.force_login(user)
 
     def test_anon_get(self):
         """
         Доступность страниц для анонимного пользователя
         """
+        recipe = Recipe.objects.first()
+        user = CustomUser.objects.first()
+        tag = Tag.objects.first()
+        ingredient = Ingredient.objects.first()
         addresses = (
             ('/api/recipes/', HTTPStatus.OK),
-            (f'/api/recipes/{self.recipe.pk}/', HTTPStatus.OK),
-            (f'/api/users/{self.user.pk}/', HTTPStatus.OK),
+            (f'/api/recipes/{recipe.pk}/', HTTPStatus.OK),
+            (f'/api/users/{user.pk}/', HTTPStatus.OK),
             ('/api/users/', HTTPStatus.UNAUTHORIZED),
             ('/api/users/me/', HTTPStatus.UNAUTHORIZED),
             ('/api/tags/', HTTPStatus.OK),
-            (f'/api/tags/{self.tag.pk}/', HTTPStatus.OK),
+            (f'/api/tags/{tag.pk}/', HTTPStatus.OK),
             ('/api/users/subscriptions/', HTTPStatus.UNAUTHORIZED),
             ('/api/ingredients/', HTTPStatus.OK),
-            (f'/api/ingredients/{self.ingredient.pk}/', HTTPStatus.OK)
+            (f'/api/ingredients/{ingredient.pk}/', HTTPStatus.OK)
         )
         for address, expected_code in addresses:
             with self.subTest(address=address):
@@ -175,7 +168,6 @@ class AuthUserTest(TestCase):
 class API_Test(APITestCase):
 
     def test_get(self):
-        user = CustomUser.objects.create(username='Ad')
         bulk_users = []
         fields = ('first_name', 'last_name', 'username', 'email', 'password')
         for i in range(1, 30):
@@ -186,8 +178,9 @@ class API_Test(APITestCase):
             bulk_users.append(user_to_list)
         CustomUser.objects.bulk_create(bulk_users)
         auth_client = APIClient()
-        auth_client.force_authenticate(user)
+        auth_client.force_authenticate(CustomUser.objects.first())
         response = auth_client.get('/api/users/')
         factory = APIRequestFactory()
         request = factory.get('/api/users/')
+        resp = auth_client.get(request)
         print(request)
