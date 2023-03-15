@@ -2,6 +2,7 @@ import base64
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from djoser.serializers import UserSerializer
 
 from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
@@ -140,17 +141,26 @@ class RecipeSerializer(serializers.ModelSerializer):
         exclude = ('pub_date',)
 
 
+def validate_ingredients(value):
+    print(value)
+
+
 class RecipeCreateSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(
         default=serializers.CurrentUserDefault(),
         read_only=True
     )
     ingredients = QuantitySerializer(source='quantity_set', many=True)
-    image = Base64ImageField(required=False)
+    image = Base64ImageField(required=True)
 
     class Meta:
         model = Recipe
         exclude = ('pub_date', )
+
+    def validate(self, attrs):
+        if not attrs['quantity_set']:
+            raise ValidationError('You need add any ingredients')
+        return super().validate(attrs)
 
     def create(self, validated_data):
         ingredients = validated_data.pop('quantity_set')
