@@ -7,6 +7,17 @@ from users.models import CustomUser
 from rest_framework.test import APITestCase, APIClient
 
 
+KEYS = {
+    'user': ('id', 'first_name', 'last_name', 'email', 'username',
+             'is_subscribed'),
+    'recipe': ('id', 'is_in_shoppingcart', 'is_favorited', 'author',
+               'tags', 'ingredients', 'name', 'image', 'text',
+               'cooking_time'),
+    'recipe_ingredients': ('id', 'ingredient', 'amount', 'mesurement_unit'),
+    'recipe_tags': ('id', 'name', 'color', 'slug')
+}
+
+
 class APITest(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -232,47 +243,42 @@ class API_Test(APITestCase):
         token = response.data['auth_token']
         self.auth_client.credentials(HTTP_AUTHORIZATION='Token ' + token)
 
-    def test_get(self):
-        response = self.auth_client.get('/api/users/')
-        results = ('id', 'first_name', 'last_name', 'email', 'username',
-                   'is_subscribed')
-        for key in response.data['results'][0].keys():
+    def check_keys(self, response_keys, expected_keys):
+        for key in response_keys:
             with self.subTest(key=key):
-                self.assertTrue(key in results)
+                self.assertTrue(key in expected_keys)
+
+    def test_get_users(self):
+        response = self.auth_client.get('/api/users/')
+        self.check_keys(response.data['results'][0].keys(), KEYS['user'])
         # profile user
         response = self.auth_client.get(
             f'/api/users/{CustomUser.objects.first().pk}/'
         )
-        for key in response.data.keys():
-            with self.subTest(key=key):
-                self.assertTrue(key in results)
+        self.check_keys(response.data.keys(), KEYS['user'])
         # me
         response = self.auth_client.get('/api/users/me/')
-        for key in response.data.keys():
-            with self.subTest(key=key):
-                self.assertTrue(key in results)
-        # get /api/recipes/
+        self.check_keys(response.data.keys(), KEYS['user'])
 
+    def test_recipes(self):
+        # get /api/recipes/
         response = self.auth_client.get('/api/recipes/')
-        results = ('id', 'is_in_shoppingcart', 'is_favorited', 'author',
-                   'tags', 'ingredients', 'name', 'image', 'text',
-                   'cooking_time')
-        for key in response.data['results'][0].keys():
-            with self.subTest(key=key):
-                self.assertTrue(key in results)
-        results_ingredients = ('id', 'ingredient', 'amount', 'mesurement_unit')
-        for key in response.data['results'][0]['ingredients'][0].keys():
-            with self.subTest(key=key):
-                self.assertTrue(key in results_ingredients)
-        results_tags = ('id', 'name', 'color', 'slug')
-        for key in response.data['results'][0]['tags'][0].keys():
-            with self.subTest(key=key):
-                self.assertTrue(key in results_tags)
-        results_author = ('id', 'first_name', 'last_name', 'email', 'username',
-                          'is_subscribed')
-        for key in response.data['results'][0]['author'].keys():
-            with self.subTest(key=key):
-                self.assertTrue(key in results_author)
+        self.check_keys(response.data['results'][0].keys(), KEYS['recipe'])
+        self.check_keys(response.data['results'][0]['ingredients'][0].keys(),
+                        KEYS['recipe_ingredients'])
+        self.check_keys(response.data['results'][0]['tags'][0].keys(),
+                        KEYS['recipe_tags'])
+        self.check_keys(response.data['results'][0]['author'].keys(),
+                        KEYS['user'])
+        # get /api/recipes/<id>/
+        response = self.auth_client.get(
+            f'/api/recipes/{Recipe.objects.last().pk}/'
+        )
+        self.check_keys(response.data.keys(), KEYS['recipe'])
+        self.check_keys(response.data['author'].keys(), KEYS['user'])
+        self.check_keys(response.data['tags'][0].keys(), KEYS['recipe_tags'])
+        self.check_keys(response.data['ingredients'][0].keys(),
+                        KEYS['recipe_ingredients'])
         # post recipe
         data = {
             'ingredients': [{'id': 1, 'amount': 15}],
@@ -285,8 +291,12 @@ class API_Test(APITestCase):
                       'AAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJ'
                       'ggg=='),
         }
-        response = self.auth_client.post('/api/recipes/', data=data, format='json')
+        response = self.auth_client.post(
+            '/api/recipes/', data=data, format='json'
+        )
         print(response)  # Necessary whrite asserts
         # get recipe/id
-        response = self.auth_client.get(f'/api/recipes/{Recipe.objects.last().pk}/')
+        response = self.auth_client.get(
+            f'/api/recipes/{Recipe.objects.last().pk}/'
+        )
         print(response)  # Necessary whrite asserts
