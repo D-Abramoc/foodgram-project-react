@@ -279,7 +279,10 @@ class API_Test(APITestCase):
         self.check_keys(response.data['tags'][0].keys(), KEYS['recipe_tags'])
         self.check_keys(response.data['ingredients'][0].keys(),
                         KEYS['recipe_ingredients'])
+
+    def test_create_recipe(self):
         # post recipe
+        Recipe.objects.all().delete()
         data = {
             'ingredients': [{'id': 1, 'amount': 15}],
             'tags': [1],
@@ -294,9 +297,4 @@ class API_Test(APITestCase):
         response = self.auth_client.post(
             '/api/recipes/', data=data, format='json'
         )
-        print(response)  # Necessary whrite asserts
-        # get recipe/id
-        response = self.auth_client.get(
-            f'/api/recipes/{Recipe.objects.last().pk}/'
-        )
-        print(response)  # Necessary whrite asserts
+        self.check_keys(response.data.keys(), KEYS['recipe'])
