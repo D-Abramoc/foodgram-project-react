@@ -6,11 +6,12 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from djoser.serializers import UserSerializer, UserCreateSerializer
+from djoser.serializers import UserSerializer
 
 from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
-                          FavoritePostDeleteSerializer, CustomUserCreateSerializer,
-                          RecipeSerializer, TagSerializer, SpecialUserSerializer,
+                          FavoritePostDeleteSerializer,
+                          CustomUserCreateSerializer,
+                          RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
                           RecipeCreateSerializer, SimpleRecipeSerializer,
                           ShoppingCartPostDeleteSerializer)

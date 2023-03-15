@@ -2,10 +2,9 @@ from http import HTTPStatus
 
 from django.test import TestCase, Client
 import json
-from recipes.models import (Tag, Recipe, Ingredient,
-                            ShoppingCart, FavoriteRecipe, Quantity)
-from users.models import CustomUser, Subscribe
-from rest_framework.test import APIRequestFactory, APITestCase, APIClient
+from recipes.models import (Tag, Recipe, Ingredient, Quantity)
+from users.models import CustomUser
+from rest_framework.test import APITestCase, APIClient
 
 
 class APITest(TestCase):
@@ -261,12 +260,15 @@ class API_Test(APITestCase):
         auth_client.credentials(HTTP_AUTHORIZATION='Token ' + token)
         # users list
         response = auth_client.get('/api/users/')
-        results = ('id', 'first_name', 'last_name', 'email', 'username', 'is_subscribed')
+        results = ('id', 'first_name', 'last_name', 'email', 'username',
+                   'is_subscribed')
         for key in response.data['results'][0].keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results)
         # profile user
-        response = auth_client.get(f'/api/users/{CustomUser.objects.first().pk}/')
+        response = auth_client.get(
+            f'/api/users/{CustomUser.objects.first().pk}/'
+        )
         for key in response.data.keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results)
@@ -292,7 +294,8 @@ class API_Test(APITestCase):
         for key in response.data['results'][0]['tags'][0].keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results_tags)
-        results_author = ('id', 'first_name', 'last_name', 'email', 'username', 'is_subscribed')
+        results_author = ('id', 'first_name', 'last_name', 'email', 'username',
+                          'is_subscribed')
         for key in response.data['results'][0]['author'].keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results_author)
