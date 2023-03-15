@@ -299,3 +299,20 @@ class API_Test(APITestCase):
         for key in response.data['results'][0]['author'].keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results_author)
+        # post recipe
+        data = {
+            'ingredients': [{'id': 1, 'amount': 15}],
+            'tags': [1],
+            'name': 'Name',
+            'text': 'text',
+            'cooking_time': 15,
+            'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABA'
+                      'gMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7E'
+                      'AAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJ'
+                      'ggg=='),
+        }
+        response = auth_client.post('/api/recipes/', data=data, format='json')
+        print(response)  # Necessary whrite asserts
+        # get recipe/id
+        response = auth_client.get(f'/api/recipes/{Recipe.objects.last().pk}/')
+        print(response)  # Necessary whrite asserts

@@ -141,10 +141,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         exclude = ('pub_date',)
 
 
-def validate_ingredients(value):
-    print(value)
-
-
 class RecipeCreateSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(
         default=serializers.CurrentUserDefault(),
