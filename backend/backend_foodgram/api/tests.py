@@ -280,8 +280,8 @@ class API_Test(APITestCase):
         self.check_keys(response.data['ingredients'][0].keys(),
                         KEYS['recipe_ingredients'])
 
-    def test_create_recipe(self):
-        # post recipe
+    def test_create_delete_recipe(self):
+        # post recipe, delete recipe
         Recipe.objects.all().delete()
         data = {
             'ingredients': [{'id': 1, 'amount': 15}],
@@ -298,3 +298,7 @@ class API_Test(APITestCase):
             '/api/recipes/', data=data, format='json'
         )
         self.check_keys(response.data.keys(), KEYS['recipe'])
+        self.assertEqual(Recipe.objects.count(), 1)
+        # delete recipe
+        response = self.auth_client.delete(f'/api/recipes/{Recipe.objects.first()}/')
+        self.assertEqual(Recipe.objects.count(), 0)
