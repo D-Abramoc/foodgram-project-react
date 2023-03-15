@@ -146,24 +146,6 @@ class APITest(TestCase):
         self.assertEqual(tuple(response_dict.keys()), expected_keys)
 
 
-# class AuthUserTest(TestCase):
-
-#     def test_users(self):
-#         bulk_users = []
-#         fields = ('first_name', 'last_name', 'username', 'email', 'password')
-#         for i in range(1, 30):
-#             data = (f'Name{i}', f'Surname{i}', f'username{i}',
-#                     f'mail{i}@fake.fake', 'pass__word{i}')
-#             data_for_create = dict(zip(fields, data))
-#             user = CustomUser(**data_for_create)
-#             bulk_users.append(user)
-#         CustomUser.objects.bulk_create(bulk_users)
-#         auth_user = Client()
-#         auth_user.force_login(CustomUser.objects.first())
-#         response = auth_user.get('/api/users/')
-#         print(response)
-
-
 class API_Test(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -226,17 +208,8 @@ class API_Test(APITestCase):
             i.ingredients.set(ingredients)
             i.tags.set(Tag.objects.filter(pk=cls.tag.pk))
 
-    def test_get(self):
-        # bulk_users = []
-        # fields = ('first_name', 'last_name', 'username', 'email', 'password')
-        # for i in range(1, 30):
-        #     data = (f'Name{i}', f'Surname{i}', f'username{i}',
-        #             f'mail{i}@fake.fake', 'pass__word{i}')
-        #     data_for_create = dict(zip(fields, data))
-        #     user_to_list = CustomUser(**data_for_create)
-        #     bulk_users.append(user_to_list)
-        # CustomUser.objects.bulk_create(bulk_users)
-        auth_client = APIClient()
+    def setUp(self):
+        self.auth_client = APIClient()
         data = {
             'first_name': 'Jack',
             'last_name': 'Sparrow',
@@ -245,7 +218,7 @@ class API_Test(APITestCase):
             'password': 'pass__word'
         }
         # Registration of new user
-        response = auth_client.post(
+        response = self.auth_client.post(
             '/api/users/', data=data
         )
         data = {
@@ -253,33 +226,34 @@ class API_Test(APITestCase):
             'password': 'pass__word'
         }
         # login
-        response = auth_client.post(
+        response = self.auth_client.post(
             '/api/auth/token/login/', data=data
         )
         token = response.data['auth_token']
-        auth_client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        # users list
-        response = auth_client.get('/api/users/')
+        self.auth_client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+
+    def test_get(self):
+        response = self.auth_client.get('/api/users/')
         results = ('id', 'first_name', 'last_name', 'email', 'username',
                    'is_subscribed')
         for key in response.data['results'][0].keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results)
         # profile user
-        response = auth_client.get(
+        response = self.auth_client.get(
             f'/api/users/{CustomUser.objects.first().pk}/'
         )
         for key in response.data.keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results)
         # me
-        response = auth_client.get('/api/users/me/')
+        response = self.auth_client.get('/api/users/me/')
         for key in response.data.keys():
             with self.subTest(key=key):
                 self.assertTrue(key in results)
         # get /api/recipes/
 
-        response = auth_client.get('/api/recipes/')
+        response = self.auth_client.get('/api/recipes/')
         results = ('id', 'is_in_shoppingcart', 'is_favorited', 'author',
                    'tags', 'ingredients', 'name', 'image', 'text',
                    'cooking_time')
@@ -311,8 +285,8 @@ class API_Test(APITestCase):
                       'AAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJ'
                       'ggg=='),
         }
-        response = auth_client.post('/api/recipes/', data=data, format='json')
+        response = self.auth_client.post('/api/recipes/', data=data, format='json')
         print(response)  # Necessary whrite asserts
         # get recipe/id
-        response = auth_client.get(f'/api/recipes/{Recipe.objects.last().pk}/')
+        response = self.auth_client.get(f'/api/recipes/{Recipe.objects.last().pk}/')
         print(response)  # Necessary whrite asserts
