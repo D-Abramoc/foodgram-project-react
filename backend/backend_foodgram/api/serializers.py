@@ -199,12 +199,23 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         representation.pop('is_favorited')
         representation.pop('is_in_shoppingcart')
         return representation
+    
+
+class FilterRecipesLimitSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        representation = super().to_representation(data)[:2]
+        return representation
 
 
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+        list_serializer_class = FilterRecipesLimitSerializer
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return representation
 
 
 class SubscriptionsSerializer(SpecialUserSerializer):

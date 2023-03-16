@@ -49,6 +49,7 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubscriptionsSerializer
     pagination_class = PageLimitPagination
     permission_classes = (IsAuthenticated,)
+    # filter_backends = (DjangoFilterBackend, RecipeLimitFilter)
 
     def get_queryset(self):
         authors = self.request.user.authors.all()

@@ -304,3 +304,17 @@ class API_Test(APITestCase):
             f'/api/recipes/{Recipe.objects.first().pk}/'
         )
         self.assertEqual(Recipe.objects.count(), 0)
+
+    def test_subscriptions(self):
+        Recipe.objects.create(
+            author=CustomUser.objects.get(username__endswith='name2'),
+            name='Name 22',
+            text='Text 22',
+            cooking_time=2
+        )
+        for user in CustomUser.objects.filter(username__endswith='2'):
+            self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
+        # for user in CustomUser.objects.filter(username__endswith=3):
+        #     self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
+        response = self.auth_client.get('/api/users/subscriptions/?limit=2&recipes_limit=1')
+        print(response)

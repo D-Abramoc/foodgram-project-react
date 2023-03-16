@@ -129,7 +129,8 @@ DJOSER = {
     'PERMISSIONS': {
         'user': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
         # 'user_list': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',)
-    }
+    },
+    'HIDE_USERS': False
 }
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

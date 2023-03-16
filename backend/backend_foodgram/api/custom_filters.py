@@ -55,3 +55,11 @@ class TagFilter(FilterSet):
     class Meta:
         model = Recipe
         fields = ('tags', 'author')
+
+
+# class RecipeLimitFilter(filters.BaseFilterBackend):
+
+#     def filter_queryset(self, request, queryset, view):
+#         if 'recipes_limit' in request.query_params:
+
+#         return queryset
