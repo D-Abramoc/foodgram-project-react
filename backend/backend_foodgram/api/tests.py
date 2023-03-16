@@ -300,5 +300,5 @@ class API_Test(APITestCase):
         self.check_keys(response.data.keys(), KEYS['recipe'])
         self.assertEqual(Recipe.objects.count(), 1)
         # delete recipe
-        response = self.auth_client.delete(f'/api/recipes/{Recipe.objects.first()}/')
+        response = self.auth_client.delete(f'/api/recipes/{Recipe.objects.first().pk}/')
         self.assertEqual(Recipe.objects.count(), 0)
