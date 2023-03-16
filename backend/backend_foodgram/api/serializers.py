@@ -203,7 +203,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
 class FilterRecipesLimitSerializer(serializers.ListSerializer):
     def to_representation(self, data):
-        representation = super().to_representation(data)[:2]
+        if not 'recipes_limit' in self.context.get('request').query_params:
+            return super().to_representation(data)
+        recipes_limit = int(
+            self.context.get('request').query_params.get('recipes_limit')
+        )
+        representation = super().to_representation(data)[:recipes_limit]
         return representation
 
 
@@ -212,10 +217,6 @@ class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
         list_serializer_class = FilterRecipesLimitSerializer
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return representation
 
 
 class SubscriptionsSerializer(SpecialUserSerializer):

@@ -5,6 +5,7 @@ import json
 from recipes.models import (Tag, Recipe, Ingredient, Quantity)
 from users.models import CustomUser
 from rest_framework.test import APITestCase, APIClient
+from rest_framework.authtoken.models import Token
 
 
 KEYS = {
@@ -313,8 +314,10 @@ class API_Test(APITestCase):
             cooking_time=2
         )
         for user in CustomUser.objects.filter(username__endswith='2'):
-            self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
-        # for user in CustomUser.objects.filter(username__endswith=3):
-        #     self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
-        response = self.auth_client.get('/api/users/subscriptions/?limit=2&recipes_limit=1')
+            response = self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
+        for user in CustomUser.objects.filter(username__endswith='3'):
+            response = self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
+        response = self.auth_client.get('/api/users/subscriptions/?limit=6&recipes_limit=2')
+        token = response.request['HTTP_AUTHORIZATION'].split()[1]
+        print(response.data['results'][2]['recipes'])
         print(response)
