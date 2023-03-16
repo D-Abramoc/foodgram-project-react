@@ -14,7 +14,8 @@ from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
                           RecipeCreateSerializer, SimpleRecipeSerializer,
-                          ShoppingCartPostDeleteSerializer)
+                          ShoppingCartPostDeleteSerializer,
+                          SpecialUserSerializer)
 from .custom_pagination import PageLimitPagination
 from .custom_filters import (IngredientFilter, IsFavoritedFilter,
                              IsINShoppingcartFilter, TagFilter)
@@ -26,7 +27,7 @@ from users.models import CustomUser
 class CustomUserViewSet(UserViewSet):
 
     @action(
-        methods=['GET', 'PATCH', ],
+        methods=['GET', ],
         detail=False,
         url_path='me',
         permission_classes=[IsAuthenticated, ]
@@ -35,6 +36,7 @@ class CustomUserViewSet(UserViewSet):
 
         if request.method == 'GET':
             serializer = UserSerializer(request.user)
+            serializer.data['username'] = request.user.username
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_serializer_class(self):

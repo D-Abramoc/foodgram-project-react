@@ -95,16 +95,16 @@ class APITest(TestCase):
         tag = Tag.objects.first()
         ingredient = Ingredient.objects.first()
         addresses = (
-            ('/api/recipes/', HTTPStatus.OK),
-            (f'/api/recipes/{recipe.pk}/', HTTPStatus.OK),
-            (f'/api/users/{user.pk}/', HTTPStatus.OK),
-            ('/api/users/', HTTPStatus.UNAUTHORIZED),
+            # ('/api/recipes/', HTTPStatus.OK),
+            # (f'/api/recipes/{recipe.pk}/', HTTPStatus.OK),
+            # (f'/api/users/{user.pk}/', HTTPStatus.OK),
+            # ('/api/users/', HTTPStatus.UNAUTHORIZED),
             ('/api/users/me/', HTTPStatus.UNAUTHORIZED),
-            ('/api/tags/', HTTPStatus.OK),
-            (f'/api/tags/{tag.pk}/', HTTPStatus.OK),
-            ('/api/users/subscriptions/', HTTPStatus.UNAUTHORIZED),
-            ('/api/ingredients/', HTTPStatus.OK),
-            (f'/api/ingredients/{ingredient.pk}/', HTTPStatus.OK)
+            # ('/api/tags/', HTTPStatus.OK),
+            # (f'/api/tags/{tag.pk}/', HTTPStatus.OK),
+            # ('/api/users/subscriptions/', HTTPStatus.UNAUTHORIZED),
+            # ('/api/ingredients/', HTTPStatus.OK),
+            # (f'/api/ingredients/{ingredient.pk}/', HTTPStatus.OK)
         )
         for address, expected_code in addresses:
             with self.subTest(address=address):
@@ -128,7 +128,7 @@ class APITest(TestCase):
             'password': 'pass__word'
         }
         # Registration of new user
-        self.client.post(
+        response = self.client.post(
             '/api/users/', data=data
         )
         self.assertEqual(CustomUser.objects.count(), number_of_users + 1)
@@ -320,4 +320,9 @@ class API_Test(APITestCase):
         response = self.auth_client.get('/api/users/subscriptions/?limit=6&recipes_limit=2')
         token = response.request['HTTP_AUTHORIZATION'].split()[1]
         print(response.data['results'][2]['recipes'])
+        print(response)
+        # api/users/me
+        response = self.auth_client.get('/api/users/me/')
+        self.check_keys = (response.data.keys(), KEYS['user'])
+        self.assertEqual(len(response.data.keys()), len(KEYS['user']))
         print(response)

@@ -29,8 +29,8 @@ class CustomUser(AbstractUser):
     )
     role = models.CharField(max_length=15, choices=USERS_ROLE,
                             default='user', blank=True)
-    REQUIRED_FIELDS = ('first_name', 'last_name',)
-    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('first_name', 'last_name')
+    USERNAME_FIELD = 'username'
 
     class Meta:
         ordering = ('username',)
