@@ -237,7 +237,7 @@ class SubscriptionsSerializer(SpecialUserSerializer):
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'recipes', 'recipes_count')
 
-    def to_representation(self, instance):
+    def to_representation(self, instance):  # remove
         representation = super().to_representation(instance)
         return representation
 
@@ -308,7 +308,7 @@ class FavoritePostDeleteSerializer(serializers.ModelSerializer):
         model = FavoriteRecipe
         fields = ('id', 'recipe', 'user')
 
-    def create(self, validated_data):
+    def create(self, validated_data):  # remove
         return super().create(validated_data)
 
     def update(self, instance, validated_data):

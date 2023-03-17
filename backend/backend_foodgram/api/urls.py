@@ -37,6 +37,10 @@ urlpatterns = [
         r'^recipes/(?P<id>\d+)/shopping_cart',
         views.shopping_cart
     ),
+    re_path(
+        r'recipes/download_shopping_cart',
+        views.download_shopping_cart
+    ),
     path('', include(router_v1.urls)),
     path('', include(router_only_get.urls)),
     path('', include('djoser.urls')),

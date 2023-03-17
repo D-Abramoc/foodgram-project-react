@@ -62,6 +62,14 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
+@api_view(['GET',])
+@permission_classes([IsAuthenticated,])
+def download_shopping_cart(request):
+    user = request.user
+    serialiser = MeSerializer(user, child=user)
+    return Response('download shopping cart')
+
+
 @api_view(['POST', 'DELETE'])
 @permission_classes([AllowAny,])
 def subscribe(request, id):

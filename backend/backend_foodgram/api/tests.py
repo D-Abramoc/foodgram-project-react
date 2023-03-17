@@ -382,7 +382,8 @@ class API_Test(APITestCase):
         ...
 
     def test_download_shopping_cart(self):
-        ...
+        response = self.auth_client.get('/api/recipes/download_shopping_cart/')
+        print(response)
 
     def test_in_out_shoppingcart(self):
         ...
