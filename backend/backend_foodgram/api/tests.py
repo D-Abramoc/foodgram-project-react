@@ -356,7 +356,8 @@ class API_Test(APITestCase):
         print(response)
 
     def test_me(self):
-        ...
+        response = self.auth_client.get('/api/users/me/')
+        self.check_keys(response.data.keys(), KEYS['user'])
 
     def test_recipes_filter(self):
         ...
@@ -370,7 +371,7 @@ class API_Test(APITestCase):
     def test_in_out_shoppingcart(self):
         ...
 
-    def test_in_out_favorite(self);
+    def test_in_out_favorite(self):
         ...
 
     def test_filter_ingredients(self):

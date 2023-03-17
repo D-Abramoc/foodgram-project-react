@@ -9,7 +9,7 @@ from djoser.views import UserViewSet
 from djoser.serializers import UserSerializer
 
 from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
-                          FavoritePostDeleteSerializer,
+                          FavoritePostDeleteSerializer, MeSerializer,
                           CustomUserCreateSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
@@ -35,8 +35,7 @@ class CustomUserViewSet(UserViewSet):
     def me(self, request):
 
         if request.method == 'GET':
-            serializer = UserSerializer(request.user)
-            serializer.data['username'] = request.user.username
+            serializer = SpecialUserSerializer(request.user, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_serializer_class(self):

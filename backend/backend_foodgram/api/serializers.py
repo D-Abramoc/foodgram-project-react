@@ -10,6 +10,11 @@ from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
 from users.models import CustomUser, Subscribe
 
 
+class MeSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        return super().to_representation(data)
+
+
 class CustomUserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -58,6 +63,10 @@ class SpecialUserSerializer(UserSerializer):
         model = CustomUser
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'is_subscribed')
+    
+    def to_representation(self, instance):
+        repres = super().to_representation(instance)
+        return repres
 
 
 class UserSerializerForRecipeCreateSerializer(UserSerializer):
