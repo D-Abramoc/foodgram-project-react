@@ -75,6 +75,9 @@ def subscribe(request, id):
     serializer = SubscribeSerializer(data=data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    # data = CustomUser.objects.get(pk=serializer.data['author'])
+    # serializer = SubscriptionsSerializer(data=data)
+    # serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

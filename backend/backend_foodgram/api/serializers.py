@@ -196,14 +196,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         serializer = RecipeSerializer(context=self.context)
         representation = serializer.to_representation(instance)
-        representation.pop('is_favorited')
-        representation.pop('is_in_shoppingcart')
+        # representation.pop('is_favorited')
+        # representation.pop('is_in_shoppingcart')
         return representation
     
 
 class FilterRecipesLimitSerializer(serializers.ListSerializer):
     def to_representation(self, data):
-        if not 'recipes_limit' in self.context.get('request').query_params:
+        if 'recipes_limit' not in self.context.get('request').query_params:
             return super().to_representation(data)
         recipes_limit = int(
             self.context.get('request').query_params.get('recipes_limit')
@@ -227,6 +227,10 @@ class SubscriptionsSerializer(SpecialUserSerializer):
         model = CustomUser
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'recipes', 'recipes_count')
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return representation
 
 
 class SubscribeSerializer(serializers.ModelSerializer):

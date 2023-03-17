@@ -95,16 +95,16 @@ class APITest(TestCase):
         tag = Tag.objects.first()
         ingredient = Ingredient.objects.first()
         addresses = (
-            # ('/api/recipes/', HTTPStatus.OK),
-            # (f'/api/recipes/{recipe.pk}/', HTTPStatus.OK),
-            # (f'/api/users/{user.pk}/', HTTPStatus.OK),
-            # ('/api/users/', HTTPStatus.UNAUTHORIZED),
+            ('/api/recipes/', HTTPStatus.OK),
+            (f'/api/recipes/{recipe.pk}/', HTTPStatus.OK),
+            (f'/api/users/{user.pk}/', HTTPStatus.OK),
+            ('/api/users/', HTTPStatus.UNAUTHORIZED),
             ('/api/users/me/', HTTPStatus.UNAUTHORIZED),
-            # ('/api/tags/', HTTPStatus.OK),
-            # (f'/api/tags/{tag.pk}/', HTTPStatus.OK),
-            # ('/api/users/subscriptions/', HTTPStatus.UNAUTHORIZED),
-            # ('/api/ingredients/', HTTPStatus.OK),
-            # (f'/api/ingredients/{ingredient.pk}/', HTTPStatus.OK)
+            ('/api/tags/', HTTPStatus.OK),
+            (f'/api/tags/{tag.pk}/', HTTPStatus.OK),
+            ('/api/users/subscriptions/', HTTPStatus.UNAUTHORIZED),
+            ('/api/ingredients/', HTTPStatus.OK),
+            (f'/api/ingredients/{ingredient.pk}/', HTTPStatus.OK)
         )
         for address, expected_code in addresses:
             with self.subTest(address=address):
@@ -245,21 +245,36 @@ class API_Test(APITestCase):
         self.auth_client.credentials(HTTP_AUTHORIZATION='Token ' + token)
 
     def check_keys(self, response_keys, expected_keys):
+        self.assertEqual(len(response_keys), len(expected_keys))
         for key in response_keys:
             with self.subTest(key=key):
                 self.assertTrue(key in expected_keys)
 
     def test_get_users(self):
         response = self.auth_client.get('/api/users/')
+        self.assertEqual(response.status_code, HTTPStatus.OK)
         self.check_keys(response.data['results'][0].keys(), KEYS['user'])
+        self.assertEqual(len(response.data['results'][0].keys()),
+                         len(KEYS['user']))
+        self.assertEqual(response.data['count'], CustomUser.objects.count())
+        self.assertEqual(response.data['next'],
+                         'http://testserver/api/users/?page=2')
+        self.assertEqual(response.data['previous'], None)
+        self.assertEqual(len(response.data['results']), 6)
+        # page and limit
+        response = self.auth_client.get('/api/users/?page=3&limit=2')
+        self.assertEqual(response.data['count'], CustomUser.objects.count())
+        self.assertEqual(response.data['next'],
+                         'http://testserver/api/users/?limit=2&page=4')
+        self.assertEqual(response.data['previous'],
+                         'http://testserver/api/users/?limit=2&page=2')
+        self.assertEqual(len(response.data['results']), 2)
         # profile user
         response = self.auth_client.get(
             f'/api/users/{CustomUser.objects.first().pk}/'
         )
         self.check_keys(response.data.keys(), KEYS['user'])
-        # me
-        response = self.auth_client.get('/api/users/me/')
-        self.check_keys(response.data.keys(), KEYS['user'])
+        self.assertEqual(len(response.data.keys()), len(KEYS['user']))
 
     def test_recipes(self):
         # get /api/recipes/
@@ -271,6 +286,11 @@ class API_Test(APITestCase):
                         KEYS['recipe_tags'])
         self.check_keys(response.data['results'][0]['author'].keys(),
                         KEYS['user'])
+        self.assertEqual(response.data['count'], Recipe.objects.count())
+        self.assertEqual(response.data['next'],
+                         'http://testserver/api/recipes/?page=2')
+        self.assertEqual(response.data['previous'], None)
+        self.assertEqual(len(response.data['results']), 6)
         # get /api/recipes/<id>/
         response = self.auth_client.get(
             f'/api/recipes/{Recipe.objects.last().pk}/'
@@ -314,15 +334,44 @@ class API_Test(APITestCase):
             cooking_time=2
         )
         for user in CustomUser.objects.filter(username__endswith='2'):
-            response = self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
+            response = self.auth_client.post(
+                f'/api/users/{user.pk}/subscribe/'
+            )
+        # TODO check response when subscribe
         for user in CustomUser.objects.filter(username__endswith='3'):
-            response = self.auth_client.post(f'/api/users/{user.pk}/subscribe/')
-        response = self.auth_client.get('/api/users/subscriptions/?limit=6&recipes_limit=2')
+            response = self.auth_client.post(
+                f'/api/users/{user.pk}/subscribe/'
+            )
+        response = self.auth_client.get(
+            '/api/users/subscriptions/?limit=6&recipes_limit=2'
+        )
         token = response.request['HTTP_AUTHORIZATION'].split()[1]
+        current_user = Token.objects.get(key=token).user
+        self.assertEqual(current_user.authors.count(), 6)
+        self.auth_client.delete(
+            f'/api/users/{current_user.authors.first().author.pk}/subscribe/'
+        )
+        self.assertEqual(current_user.authors.count(), 5)
         print(response.data['results'][2]['recipes'])
         print(response)
-        # api/users/me
-        response = self.auth_client.get('/api/users/me/')
-        self.check_keys = (response.data.keys(), KEYS['user'])
-        self.assertEqual(len(response.data.keys()), len(KEYS['user']))
-        print(response)
+
+    def test_me(self):
+        ...
+
+    def test_recipes_filter(self):
+        ...
+
+    def test_recipe_patch(self):
+        ...
+
+    def test_download_shopping_cart(self):
+        ...
+
+    def test_in_out_shoppingcart(self):
+        ...
+
+    def test_in_out_favorite(self);
+        ...
+
+    def test_filter_ingredients(self):
+        ...
