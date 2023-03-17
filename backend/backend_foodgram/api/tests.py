@@ -11,7 +11,7 @@ from rest_framework.authtoken.models import Token
 KEYS = {
     'user': ('id', 'first_name', 'last_name', 'email', 'username',
              'is_subscribed'),
-    'recipe': ('id', 'is_in_shoppingcart', 'is_favorited', 'author',
+    'recipe': ('id', 'is_in_shopping_cart', 'is_favorited', 'author',
                'tags', 'ingredients', 'name', 'image', 'text',
                'cooking_time'),
     'recipe_ingredients': ('id', 'ingredient', 'amount', 'mesurement_unit'),
@@ -352,15 +352,31 @@ class API_Test(APITestCase):
             f'/api/users/{current_user.authors.first().author.pk}/subscribe/'
         )
         self.assertEqual(current_user.authors.count(), 5)
-        print(response.data['results'][2]['recipes'])
-        print(response)
 
     def test_me(self):
         response = self.auth_client.get('/api/users/me/')
         self.check_keys(response.data.keys(), KEYS['user'])
 
     def test_recipes_filter(self):
-        ...
+        self.auth_client.post('/api/recipes/5/favorite/')
+        self.auth_client.post('/api/recipes/5/shopping_cart/')
+        self.auth_client.post('/api/users/6/subscribe/')
+        response = self.auth_client.get('/api/recipes/?is_favorited=1')
+        for result in response.data['results']:
+            with self.subTest(result=result):
+                self.assertEqual(result['is_favorited'], True)
+        response = self.auth_client.get('/api/recipes/?is_favorited=0')
+        for result in response.data['results']:
+            with self.subTest(result=result):
+                self.assertEqual(result['is_favorited'], False)
+        response = self.auth_client.get('/api/recipes/?is_in_shopping_cart=1')
+        for result in response.data['results']:
+            with self.subTest(result=result):
+                self.assertEqual(result['is_in_shopping_cart'], True)
+        response = self.auth_client.get('/api/recipes/?is_in_shopping_cart=0')
+        for result in response.data['results']:
+            with self.subTest(result=result):
+                self.assertEqual(result['is_in_shopping_cart'], False)
 
     def test_recipe_patch(self):
         ...

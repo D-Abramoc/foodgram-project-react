@@ -64,7 +64,7 @@ class SpecialUserSerializer(UserSerializer):
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'is_subscribed')
     
-    def to_representation(self, instance):
+    def to_representation(self, instance):  # remove while refactoring
         repres = super().to_representation(instance)
         return repres
 
@@ -136,7 +136,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    is_in_shoppingcart = ShoppingCartSerializer(source='shopping_carts')
+    is_in_shopping_cart = ShoppingCartSerializer(source='shopping_carts')
     is_favorited = FavoriteSerializer(source='users')
     author = SpecialUserSerializer()
     tags = TagSerializer(many=True)
@@ -206,7 +206,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         serializer = RecipeSerializer(context=self.context)
         representation = serializer.to_representation(instance)
         # representation.pop('is_favorited')
-        # representation.pop('is_in_shoppingcart')
+        # representation.pop('is_in_shopping_cart')
         return representation
     
 

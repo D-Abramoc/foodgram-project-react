@@ -35,13 +35,13 @@ class IsFavoritedFilter(filters.BaseFilterBackend):
 class IsINShoppingcartFilter(filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
-        if 'is_in_shoppingcart' not in request.query_params:
+        if 'is_in_shopping_cart' not in request.query_params:
             return queryset
-        if int(request.query_params.get('is_in_shoppingcart')) not in (0, 1):
+        if int(request.query_params.get('is_in_shopping_cart')) not in (0, 1):
             raise ValidationError(
                 'Параметр is_in_shoppingcart должен быть равен 0 или 1'
             )
-        if int(request.query_params.get('is_in_shoppingcart')) == 0:
+        if int(request.query_params.get('is_in_shopping_cart')) == 0:
             queryset = queryset.exclude(shopping_carts__user=request.user)
             return queryset
         queryset = queryset.filter(shopping_carts__user=request.user)
