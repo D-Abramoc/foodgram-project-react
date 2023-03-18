@@ -382,7 +382,11 @@ class API_Test(APITestCase):
         ...
 
     def test_download_shopping_cart(self):
+        response = self.auth_client.post('/api/recipes/1/shopping_cart/')
+        response = self.auth_client.post('/api/recipes/2/shopping_cart/')
         response = self.auth_client.get('/api/recipes/download_shopping_cart/')
+        token = response.request['HTTP_AUTHORIZATION'].split()[1]
+        current_user = Token.objects.get(key=token).user
         print(response)
 
     def test_in_out_shoppingcart(self):

@@ -2,11 +2,12 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from djoser.serializers import UserSerializer
+from django.core import serializers as dj_serializers
 
 from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
                           FavoritePostDeleteSerializer, MeSerializer,
@@ -65,9 +66,10 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
 @api_view(['GET',])
 @permission_classes([IsAuthenticated,])
 def download_shopping_cart(request):
-    user = request.user
-    serialiser = MeSerializer(user, child=user)
-    return Response('download shopping cart')
+    result = (Ingredient.objects.values('name')
+              .filter(recipes__in=request.user.shoppingcart.recipes.all())
+              .annotate(ingredient_sum=Sum('quantity__amount')))
+    return Response(result)
 
 
 @api_view(['POST', 'DELETE'])
