@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from djoser.serializers import UserSerializer
-from django.core import serializers as dj_serializers
+from django.conf import settings
 
 from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
                           FavoritePostDeleteSerializer, MeSerializer,
@@ -69,6 +69,11 @@ def download_shopping_cart(request):
     result = (Ingredient.objects.values('name')
               .filter(recipes__in=request.user.shoppingcart.recipes.all())
               .annotate(ingredient_sum=Sum('quantity__amount')))
+    with open('result.txt', 'w') as f:
+        for item in result:
+            key, value = item.values()
+            row = f'{key}: {value}\n'
+            f.write(row)
     return Response(result)
 
 
