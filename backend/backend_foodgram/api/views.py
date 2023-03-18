@@ -74,7 +74,7 @@ def download_shopping_cart(request):
             key, value = item.values()
             row = f'{key}: {value}\n'
             f.write(row)
-    return Response(result)
+    return Response(f, content_type='text/plane')
 
 
 @api_view(['POST', 'DELETE'])
