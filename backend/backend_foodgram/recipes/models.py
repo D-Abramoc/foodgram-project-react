@@ -12,6 +12,7 @@ class Ingredient(models.Model):
                                verbose_name='Единицы измерения')
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'ингредиент'
         verbose_name_plural = 'ингредиенты'
 

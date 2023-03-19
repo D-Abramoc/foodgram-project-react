@@ -29,7 +29,12 @@ class RecipeAdmin(admin.ModelAdmin):
     favorite_count.short_description = 'Количество добавлений в избранное'
 
 
-admin.site.register(Ingredient)
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = ('name', 'measure')
+    list_filter = ('name',)
+
+
 admin.site.register(Tag)
 admin.site.register(ShoppingCart)
 admin.site.register(FavoriteRecipe)
