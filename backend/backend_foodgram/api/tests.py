@@ -328,3 +328,6 @@ class API_Test(APITestCase):
     def test_logout(self):
         self.auth_client.post('/api/auth/token/logout/')
         self.assertEqual(Token.objects.count(), 0)
+
+    def test_password(self):
+        ...
