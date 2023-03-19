@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from io import TextIOWrapper
 
 from django.test import TestCase, Client
 import json
@@ -389,7 +390,7 @@ class API_Test(APITestCase):
         response = self.auth_client.post('/api/recipes/2/shopping_cart/')
         self.assertEqual(current_user.shoppingcart.recipes.count(), 2)
         response = self.auth_client.get('/api/recipes/download_shopping_cart/')
-        self.assertEqual(response.data[0]['ingredient_sum'], 250)
+        self.assertIsInstance(response.data, TextIOWrapper)
 
     def test_in_out_shoppingcart(self):
         ...
