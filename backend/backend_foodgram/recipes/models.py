@@ -12,8 +12,8 @@ class Ingredient(models.Model):
                                verbose_name='Единицы измерения')
 
     class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
+        verbose_name = 'ингредиент'
+        verbose_name_plural = 'ингредиенты'
 
     def __str__(self):
         return self.name
@@ -28,8 +28,8 @@ class Tag(models.Model):
                             max_length=settings.MAX_LENGTH_NAME)
 
     class Meta:
-        verbose_name = 'Тег'
-        verbose_name_plural = 'Теги'
+        verbose_name = 'тег'
+        verbose_name_plural = 'теги'
 
     def __str__(self) -> str:
         return self.name
@@ -55,8 +55,8 @@ class Recipe(models.Model):
                                     auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
+        verbose_name = 'рецепт'
+        verbose_name_plural = 'рецепты'
         ordering = ('-pub_date',)
 
     def __str__(self) -> str:
@@ -65,14 +65,28 @@ class Recipe(models.Model):
 
 class Quantity(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE,
+                                   verbose_name='Ингредиент')
     amount = models.FloatField(verbose_name='Количество', blank=False,
                                null=False)
+
+    class Meta:
+        verbose_name = 'запись о количестве ингредиента в рецепте'
+        verbose_name_plural = 'количество ингредиентов'
+
+    def __str__(self):
+        return (f'Рецепт {self.recipe.name} '
+                f'содержит {self.amount} {self.ingredient.measure} '
+                f'ингредиента {self.ingredient.name}')
 
 
 class ShoppingCart(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     recipes = models.ManyToManyField(Recipe, related_name='shopping_carts')
+
+    class Meta:
+        verbose_name = 'список покупок'
+        verbose_name_plural = 'список покупок'
 
 
 class FavoriteRecipe(models.Model):
@@ -80,3 +94,7 @@ class FavoriteRecipe(models.Model):
                              related_name='favorite_recipes')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
                                related_name='users')
+
+    class Meta:
+        verbose_name = 'избранные рецепты'
+        verbose_name_plural = 'избранные рецепты'

@@ -34,6 +34,8 @@ class CustomUser(AbstractUser):
 
     class Meta:
         ordering = ('username',)
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
 
     def __str__(self):
         return self.username
@@ -49,6 +51,19 @@ class CustomUser(AbstractUser):
 
 class Subscribe(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
-                               related_name='subscribers')
-    subscriber = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
-                                   related_name='authors')
+                               related_name='subscribers',
+                               verbose_name='автор',
+                               help_text='Выберите автора для подписки')
+    subscriber = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='authors',
+        verbose_name='подписчик',
+        help_text='Выберите кто подписывается на автора'
+    )
+
+    class Meta:
+        verbose_name = 'кто на кого подписан'
+        verbose_name_plural = 'кто на кого подписан'
+
+    def __str__(self):
+        return (f'{self.subscriber.username} подписан '
+                f'на {self.author.username}')

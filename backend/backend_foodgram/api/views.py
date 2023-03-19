@@ -85,7 +85,7 @@ def subscribe(request, id):
     if request.method == 'DELETE':
         request.user.authors.filter(author__pk=id).delete()
         return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
-    request.data.clean()
+    request.data.clear()
     request.data['subscriber'] = (
         get_object_or_404(CustomUser, pk=request.user.pk).pk
     )
