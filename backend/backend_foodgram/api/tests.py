@@ -330,4 +330,12 @@ class API_Test(APITestCase):
         self.assertEqual(Token.objects.count(), 0)
 
     def test_password(self):
-        ...
+        current_password = CustomUser.objects.get(username='pirat').password
+        data = {
+            'current_password': 'pass__word',
+            'new_password': 'pass__word1'
+        }
+        self.auth_client.post('/api/users/set_password/',
+                                         data=data)
+        new_password = CustomUser.objects.get(username='pirat').password
+        self.assertFalse(current_password == new_password)
