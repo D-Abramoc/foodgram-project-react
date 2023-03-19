@@ -10,11 +10,6 @@ from recipes.models import (Ingredient, Recipe, ShoppingCart, Tag,
 from users.models import CustomUser, Subscribe
 
 
-class MeSerializer(serializers.ListSerializer):
-    def to_representation(self, data):
-        return super().to_representation(data)
-
-
 class CustomUserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -63,12 +58,9 @@ class SpecialUserSerializer(UserSerializer):
         model = CustomUser
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'is_subscribed')
-    
-    def to_representation(self, instance):  # remove while refactoring
-        repres = super().to_representation(instance)
-        return repres
 
 
+# check and remove
 class UserSerializerForRecipeCreateSerializer(UserSerializer):
     is_subscribed = SubscribeSerializer(source='subscribers')
 
@@ -95,7 +87,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'name', 'measure')
+        fields = ('id', 'name', 'measure')  # '__all__'
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -126,7 +118,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ('id', 'recipes', 'user')
-        read_only_fields = ('user',)
+        read_only_fields = ('user',)  # check
 
     def to_representation(self, instance):
         currentuser = self.context.get('request').user
@@ -184,7 +176,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             item_of_quantity.save()
         return recipe
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data):  # refactoring
         instance.quantity_set.all().delete()
         ingredients = validated_data.pop('quantity_set')
         tags = validated_data.pop('tags')
@@ -202,13 +194,13 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             item_of_quantity.save()
         return recipe
 
+    # should try using the settings diffrent serializers
+    # for in and out in view instead of to_representaition
     def to_representation(self, instance):
         serializer = RecipeSerializer(context=self.context)
         representation = serializer.to_representation(instance)
-        # representation.pop('is_favorited')
-        # representation.pop('is_in_shopping_cart')
         return representation
-    
+
 
 class FilterRecipesLimitSerializer(serializers.ListSerializer):
     def to_representation(self, data):
@@ -237,16 +229,12 @@ class SubscriptionsSerializer(SpecialUserSerializer):
         fields = ('id', 'first_name', 'last_name', 'email', 'username',
                   'recipes', 'recipes_count')
 
-    def to_representation(self, instance):  # remove
-        representation = super().to_representation(instance)
-        return representation
-
 
 class SubscribeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscribe
-        fields = ('id', 'author', 'subscriber')
+        fields = ('id', 'author', 'subscriber')  # '__all__'
 
 
 class SimpleRecipeSerializer(serializers.ModelSerializer):
@@ -258,10 +246,6 @@ class SimpleRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
-
-    def to_representation(self, instance):  # Удалить при рефакторинге
-        repres = super().to_representation(instance)
-        return repres
 
 
 class AnonimusRecipeSerializer(serializers.ModelSerializer):
@@ -280,7 +264,6 @@ class ShoppingCartPostDeleteSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         read_only=True, default=serializers.CurrentUserDefault()
     )
-    # recipes = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = ShoppingCart
@@ -308,9 +291,6 @@ class FavoritePostDeleteSerializer(serializers.ModelSerializer):
         model = FavoriteRecipe
         fields = ('id', 'recipe', 'user')
 
-    def create(self, validated_data):  # remove
-        return super().create(validated_data)
-
     def update(self, instance, validated_data):
         if self.context.get('request').method == 'DELETE':
             set_recipe = [
@@ -321,8 +301,3 @@ class FavoritePostDeleteSerializer(serializers.ModelSerializer):
         add_recipe = validated_data.get('recipes')[0].pk
         instance.recipes.add(add_recipe)
         return instance
-
-    # def to_representation(self, instance):
-    #     serializer = SimpleRecipeSerializer(many=True)
-    #     representation = serializer.to_representation(instance.recipes.all())
-    #     return representation

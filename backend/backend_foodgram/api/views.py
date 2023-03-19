@@ -7,10 +7,9 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from djoser.serializers import UserSerializer
-from django.conf import settings
 
 from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
-                          FavoritePostDeleteSerializer, MeSerializer,
+                          FavoritePostDeleteSerializer,
                           CustomUserCreateSerializer,
                           RecipeSerializer, TagSerializer,
                           SubscribeSerializer, SubscriptionsSerializer,
@@ -36,7 +35,9 @@ class CustomUserViewSet(UserViewSet):
     def me(self, request):
 
         if request.method == 'GET':
-            serializer = SpecialUserSerializer(request.user, context={'request': request})
+            serializer = SpecialUserSerializer(
+                request.user, context={'request': request}
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_serializer_class(self):
