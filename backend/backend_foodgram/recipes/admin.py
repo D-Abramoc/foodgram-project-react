@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Sum
 from .models import (Tag, Ingredient, Recipe, Quantity, ShoppingCart,
                      FavoriteRecipe)
 
@@ -35,7 +36,30 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {
+            "fields": (
+                'user', 'recipes', 'shopping_cart'
+            ),
+        }),
+    )
+    readonly_fields = ('shopping_cart',)
+
+    def shopping_cart(self, obj):
+        result = (Ingredient.objects.values('name')
+                  .filter(recipes__in=obj.user.shoppingcart.recipes.all())
+                  .annotate(ingredient_sum=Sum('quantity__amount')))
+        list_of_ingredients = ''
+        for item in result:
+            key, value = item.values()
+            row = f'{key}: {value}\n'
+            list_of_ingredients += row
+        return list_of_ingredients
+
+
 admin.site.register(Tag)
-admin.site.register(ShoppingCart)
+# admin.site.register(ShoppingCart)
 admin.site.register(FavoriteRecipe)
 admin.site.register(Quantity)

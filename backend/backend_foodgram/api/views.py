@@ -64,8 +64,8 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-@api_view(['GET',])
-@permission_classes([IsAuthenticated,])
+@api_view(['GET', ])
+@permission_classes([IsAuthenticated, ])
 def download_shopping_cart(request):
     result = (Ingredient.objects.values('name')
               .filter(recipes__in=request.user.shoppingcart.recipes.all())
@@ -80,7 +80,7 @@ def download_shopping_cart(request):
 
 
 @api_view(['POST', 'DELETE'])
-@permission_classes([AllowAny,])
+@permission_classes([AllowAny, ])
 def subscribe(request, id):
     if request.method == 'DELETE':
         request.user.authors.filter(author__pk=id).delete()
@@ -97,7 +97,7 @@ def subscribe(request, id):
 
 
 @api_view(['POST', 'DELETE'])
-@permission_classes([AllowAny,])
+@permission_classes([AllowAny, ])
 def favorite(request, id):
     if request.method == 'DELETE':
         request.user.favorite_recipes.filter(recipe__pk=id).delete()
@@ -116,7 +116,7 @@ def favorite(request, id):
 
 
 @api_view(['POST', 'DELETE'])  # сериалайзер одинаковый, надо рефачить
-@permission_classes([AllowAny,])
+@permission_classes([AllowAny, ])
 def shopping_cart(request, id):
     request.data.clear()
     request.data['recipes'] = [

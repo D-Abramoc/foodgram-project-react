@@ -89,6 +89,9 @@ class ShoppingCart(models.Model):
         verbose_name = 'список покупок'
         verbose_name_plural = 'список покупок'
 
+    def __str__(self):
+        return (f'Список покупок юзера {self.user.username}')
+
 
 class FavoriteRecipe(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
