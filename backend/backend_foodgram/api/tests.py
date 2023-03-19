@@ -397,11 +397,13 @@ class API_Test(APITestCase):
         response = self.auth_client.delete('/api/recipes/1/shopping_cart/')
         self.assertEqual(current_user.shoppingcart.recipes.count(), 1)
 
-    def test_in_out_shoppingcart(self):
-        ...
-
     def test_in_out_favorite(self):
-        ...
+        response = self.auth_client.post('/api/recipes/5/favorite/')
+        token = response.request['HTTP_AUTHORIZATION'].split()[1]
+        current_user = Token.objects.get(key=token).user
+        self.assertEqual(current_user.favorite_recipes.count(), 1)
+        response = self.auth_client.delete('/api/recipes/5/favorite/')
+        self.assertEqual(current_user.favorite_recipes.count(), 0)
 
     def test_filter_ingredients(self):
         ...
