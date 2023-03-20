@@ -60,16 +60,6 @@ class SpecialUserSerializer(UserSerializer):
                   'is_subscribed')
 
 
-# check and remove
-class UserSerializerForRecipeCreateSerializer(UserSerializer):
-    is_subscribed = SubscribeSerializer(source='subscribers')
-
-    class Meta:
-        model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'email', 'username',
-                  'is_subscribed')
-
-
 class QuantitySerializer(serializers.ModelSerializer):
     ingredient = serializers.CharField(source='ingredient.name',
                                        read_only=True)
