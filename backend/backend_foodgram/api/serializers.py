@@ -183,8 +183,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             item_of_quantity.save()
         return recipe
 
-    # should try using the settings diffrent serializers
-    # for in and out in view instead of to_representaition
     def to_representation(self, instance):
         serializer = RecipeSerializer(context=self.context)
         representation = serializer.to_representation(instance)
