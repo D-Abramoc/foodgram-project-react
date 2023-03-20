@@ -79,7 +79,7 @@ def download_shopping_cart(request):
 
 
 @api_view(['POST', 'DELETE'])
-@permission_classes([AllowAny, ])
+@permission_classes([IsAuthenticated, ])
 def subscribe(request, id):
     if request.method == 'DELETE':
         request.user.authors.filter(author__pk=id).delete()
@@ -96,7 +96,7 @@ def subscribe(request, id):
 
 
 @api_view(['POST', 'DELETE'])
-@permission_classes([AllowAny, ])
+@permission_classes([IsAuthenticated, ])
 def favorite(request, id):
     if request.method == 'DELETE':
         request.user.favorite_recipes.filter(recipe__pk=id).delete()
@@ -115,7 +115,7 @@ def favorite(request, id):
 
 
 @api_view(['POST', 'DELETE'])  # сериалайзер одинаковый, надо рефачить
-@permission_classes([AllowAny, ])
+@permission_classes([IsAuthenticated, ])
 def shopping_cart(request, id):
     request.data.clear()
     request.data['recipes'] = [
@@ -170,7 +170,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipeSerializer
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all().order_by('name')
     serializer_class = TagSerializer
     pagination_class = None
