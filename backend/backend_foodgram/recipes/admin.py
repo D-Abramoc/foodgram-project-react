@@ -60,6 +60,5 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tag)
-# admin.site.register(ShoppingCart)
 admin.site.register(FavoriteRecipe)
 admin.site.register(Quantity)

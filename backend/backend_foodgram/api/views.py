@@ -52,7 +52,6 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubscriptionsSerializer
     pagination_class = PageLimitPagination
     permission_classes = (IsAuthenticated,)
-    # filter_backends = (DjangoFilterBackend, RecipeLimitFilter)
 
     def get_queryset(self):
         authors = self.request.user.authors.all()
@@ -169,11 +168,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.user.is_anonymous:
             return AnonimusRecipeSerializer
         return RecipeSerializer
-
-    # def get_queryset(self):
-    #     if self.request.method in ('PATCH',):
-    #         return Recipe.objects.filter(pk=self.kwargs.get('pk'))
-    #     return super().get_queryset()
 
 
 class TagViewSet(viewsets.ModelViewSet):

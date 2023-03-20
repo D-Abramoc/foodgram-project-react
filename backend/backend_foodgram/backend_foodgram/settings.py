@@ -86,12 +86,6 @@ WSGI_APPLICATION = 'backend_foodgram.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
@@ -143,7 +137,6 @@ DJOSER = {
     },
     'PERMISSIONS': {
         'user': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
-        # 'user_list': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',)
     },
     'HIDE_USERS': False
 }

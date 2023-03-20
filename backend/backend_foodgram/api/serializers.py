@@ -35,7 +35,7 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-class SubscribeSerializer(serializers.ModelSerializer):
+class SubscribeTrueOrFalseSerializer(serializers.ModelSerializer):
     author = serializers.IntegerField(source='author.pk', required=False)
     subscriber = serializers.IntegerField(source='subscriber.pk',
                                           required=False)
@@ -52,7 +52,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
 
 class SpecialUserSerializer(UserSerializer):
-    is_subscribed = SubscribeSerializer(source='subscribers')
+    is_subscribed = SubscribeTrueOrFalseSerializer(source='subscribers')
 
     class Meta:
         model = CustomUser
@@ -77,7 +77,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'name', 'measure')  # '__all__'
+        fields = '__all__'
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -108,7 +108,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ('id', 'recipes', 'user')
-        read_only_fields = ('user',)  # check
 
     def to_representation(self, instance):
         currentuser = self.context.get('request').user
@@ -225,6 +224,9 @@ class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribe
         fields = ('id', 'author', 'subscriber')  # '__all__'
+
+    def to_representation(self, instance):
+        return super().to_representation(instance)
 
 
 class SimpleRecipeSerializer(serializers.ModelSerializer):
