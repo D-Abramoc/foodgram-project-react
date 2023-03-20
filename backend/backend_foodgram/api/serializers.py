@@ -223,7 +223,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscribe
-        fields = ('id', 'author', 'subscriber')  # '__all__'
+        fields = '__all__'
 
 
 class SimpleRecipeSerializer(serializers.ModelSerializer):
