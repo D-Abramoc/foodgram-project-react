@@ -220,7 +220,10 @@ class API_Test(APITestCase):
                         KEYS['recipe_ingredients'])
 
     def test_create_delete_recipe(self):
-        # post recipe, delete recipe
+        '''
+        Test post and delete recipe.
+        '''
+        # post recipe, valid data
         Recipe.objects.all().delete()
         data = {
             'ingredients': [{'id': 1, 'amount': 15}],
@@ -243,6 +246,203 @@ class API_Test(APITestCase):
             f'/api/recipes/{Recipe.objects.first().pk}/'
         )
         self.assertEqual(Recipe.objects.count(), 0)
+        # post recipe, invalid data
+        Recipe.objects.all().delete()
+        invalid_data = (
+            {
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'name': 'Name',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+            },
+            {
+                'ingredients': 1,
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': 'string',
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': {'id': 1, 'amount': 15},
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 5000, 'amount': 15}],
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': -15}],
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [],
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': 1,
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'name': 1,
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'name': 'Name',
+                'text': 1,
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': -15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [1],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': 1,
+            },
+            {
+                'ingredients': [{'id': 1, 'amount': 15}],
+                'tags': [12],
+                'name': 'Name',
+                'text': 'text',
+                'cooking_time': 15,
+                'image': ('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEA'
+                          'AAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACX'
+                          'BIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOy'
+                          'YQAAAABJRU5ErkJggg=='),
+            },
+        )
+        for data in invalid_data:
+            with self.subTest(data=data):
+                response = self.auth_client.post(
+                    '/api/recipes/', data=data, format='json'
+                )
+                self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+                self.assertEqual(Recipe.objects.count(), 0)
 
     def test_subscriptions(self):
         Recipe.objects.create(

@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from users.models import CustomUser
 
-from .validators import validate_cooking_time
+from .validators import validate_minimum, validate_string
 
 
 class Ingredient(models.Model):
@@ -40,17 +40,19 @@ class Recipe(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
                                verbose_name='Автор', related_name='recipes')
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
-                            unique=True, verbose_name='Название блюда')
+                            unique=True, verbose_name='Название блюда',
+                            validators=(validate_string, ))
     image = models.ImageField(verbose_name='Фото готового блюда', unique=False,
                               upload_to='recipes/images/')
     text = models.TextField(verbose_name='Описание приготовления блюда',
-                            help_text='Опишите порядок приготовления блюда')
+                            help_text='Опишите порядок приготовления блюда',
+                            validators=(validate_string,))
     ingredients = models.ManyToManyField(Ingredient, through='Quantity',
                                          related_name='recipes')
     tags = models.ManyToManyField(Tag, related_name='recipes')
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления в минутах',
-        validators=(validate_cooking_time, )
+        validators=(validate_minimum, )
     )
     pub_date = models.DateTimeField(verbose_name='Дата добавления рецепта',
                                     auto_now_add=True)
@@ -68,8 +70,10 @@ class Quantity(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE,
                                    verbose_name='Ингредиент')
-    amount = models.FloatField(verbose_name='Количество', blank=False,
-                               null=False)
+    amount = models.PositiveIntegerField(verbose_name='Количество',
+                                         blank=False,
+                                         null=False,
+                                         validators=(validate_minimum,))
 
     class Meta:
         verbose_name = 'запись о количестве ингредиента в рецепте'
