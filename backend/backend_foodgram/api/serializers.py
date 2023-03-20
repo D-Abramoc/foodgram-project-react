@@ -225,9 +225,6 @@ class SubscribeSerializer(serializers.ModelSerializer):
         model = Subscribe
         fields = ('id', 'author', 'subscriber')  # '__all__'
 
-    def to_representation(self, instance):
-        return super().to_representation(instance)
-
 
 class SimpleRecipeSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
