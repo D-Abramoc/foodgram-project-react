@@ -286,13 +286,9 @@ class FavoritePostDeleteSerializer(serializers.ModelSerializer):
         model = FavoriteRecipe
         fields = ('id', 'recipe', 'user')
 
-    def update(self, instance, validated_data):
-        if self.context.get('request').method == 'DELETE':
-            set_recipe = [
-                recipe.pk for recipe in validated_data.get('recipes')
-            ]
-            instance.recipes.set(set_recipe)
-            return instance
-        add_recipe = validated_data.get('recipes')[0].pk
-        instance.recipes.add(add_recipe)
-        return instance
+    def create(self, validated_data):
+        try:
+            inst = super().create(validated_data)
+        except IntegrityError:
+            raise ValidationError('Этот рецепт уже добавлен в избранное')
+        return inst
