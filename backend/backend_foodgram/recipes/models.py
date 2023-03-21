@@ -78,6 +78,10 @@ class Quantity(models.Model):
     class Meta:
         verbose_name = 'запись о количестве ингредиента в рецепте'
         verbose_name_plural = 'количество ингредиентов'
+        constraints = [
+            models.UniqueConstraint(fields=('recipe', 'ingredient'),
+                                    name='unique_ingredient_in)recipe')
+        ]
 
     def __str__(self):
         return (f'Рецепт {self.recipe.name} '

@@ -160,10 +160,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             ingredient, amount = ingredient.items()
             ingredient = ingredient[1]['pk']
             amount = amount[1]
-            item_of_quantity = Quantity(recipe=recipe,
-                                        ingredient=ingredient,
-                                        amount=amount)
-            item_of_quantity.save()
+            obj, created = Quantity.objects.get_or_create(
+                recipe=recipe, ingredient=ingredient,
+                defaults={'amount': amount}
+            )
+            if created is not True:
+                obj.amount += amount
+                obj.save()
+            print(obj)
+            print(created)
         return recipe
 
     def update(self, instance, validated_data):  # refactoring
