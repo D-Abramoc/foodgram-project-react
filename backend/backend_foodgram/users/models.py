@@ -65,7 +65,11 @@ class Subscribe(models.Model):
         verbose_name_plural = 'кто на кого подписан'
         constraints = [
             models.UniqueConstraint(fields=['author', 'subscriber'],
-                                    name='unique_subscription')
+                                    name='unique_subscription'),
+            models.CheckConstraint(
+                check=~models.Q(subscriber=models.F('author')),
+                name='prevent_self_subscribe'
+            )
         ]
 
     def __str__(self):
