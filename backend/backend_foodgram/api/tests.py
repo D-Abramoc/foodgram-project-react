@@ -455,13 +455,12 @@ class API_Test(APITestCase):
             response = self.auth_client.post(
                 f'/api/users/{user.pk}/subscribe/'
             )
-        # TODO check response when subscribe
         for user in CustomUser.objects.filter(username__endswith='3'):
             response = self.auth_client.post(
                 f'/api/users/{user.pk}/subscribe/'
             )
         response = self.auth_client.get(
-            '/api/users/subscriptions/?limit=6&recipes_limit=2'
+            '/api/users/subscriptions/'
         )
         token = response.request['HTTP_AUTHORIZATION'].split()[1]
         current_user = Token.objects.get(key=token).user

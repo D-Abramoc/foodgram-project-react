@@ -86,6 +86,8 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+
 class FavoriteSerializer(serializers.ModelSerializer):
     user = serializers.ImageField(source='user.pk', required=False)
     recipe = serializers.IntegerField(source='recipe.pk', required=False)

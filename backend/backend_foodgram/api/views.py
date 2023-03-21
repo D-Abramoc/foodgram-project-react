@@ -92,6 +92,14 @@ def subscribe(request, id):
     serializer = SubscribeSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    serializer = SubscriptionsSerializer(
+        (
+            CustomUser.objects.annotate(recipes_count=Count('recipes'))
+            .order_by('username')
+            .get(pk=serializer.validated_data['author'].pk)
+        ),
+        context={'request': request},
+    )
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
