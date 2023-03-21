@@ -1,6 +1,7 @@
 import base64
 
 from django.core.files.base import ContentFile
+from django.db.utils import IntegrityError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from djoser.serializers import UserSerializer
@@ -84,8 +85,6 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
-
-
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -224,6 +223,13 @@ class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribe
         fields = '__all__'
+
+    def create(self, validated_data):
+        try:
+            inst = super().create(validated_data)
+        except IntegrityError:
+            raise ValidationError('Вы уже подписаны на этого автора')
+        return inst
 
 
 class SimpleRecipeSerializer(serializers.ModelSerializer):
