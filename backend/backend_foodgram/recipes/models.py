@@ -110,3 +110,7 @@ class FavoriteRecipe(models.Model):
             models.UniqueConstraint(fields=['user', 'recipe'],
                                     name='uniqu_favorite_recipe')
         ]
+
+    def __str__(self):
+        return (f'Рецепт {self.recipe.name} '
+                f'в избранном юзера {self.user.username}')
