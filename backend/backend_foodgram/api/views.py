@@ -161,6 +161,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, IsFavoritedFilter,
                        IsINShoppingcartFilter)
     filterset_class = TagFilter
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_serializer_class(self):
         if self.request.method in ('POST', 'PATCH'):
