@@ -33,12 +33,10 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated, ]
     )
     def me(self, request):
-
-        if request.method == 'GET':
-            serializer = SpecialUserSerializer(
-                request.user, context={'request': request}
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = SpecialUserSerializer(
+            request.user, context={'request': request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_serializer_class(self):
         if self.request.user.is_anonymous:
@@ -56,11 +54,10 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         authors = self.request.user.authors.all()
         authors_pk = [author.author.pk for author in authors]
-        queryset = (
+        return (
             CustomUser.objects.filter(pk__in=authors_pk)
             .annotate(recipes_count=Count('recipes')).order_by('username')
         )
-        return queryset
 
 
 @api_view(['GET', ])

@@ -1,8 +1,7 @@
+from django_filters.rest_framework import CharFilter, FilterSet
+from recipes.models import Recipe
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError
-from django_filters.rest_framework import CharFilter, FilterSet
-
-from recipes.models import Recipe
 
 
 class IngredientFilter(filters.BaseFilterBackend):
@@ -12,8 +11,7 @@ class IngredientFilter(filters.BaseFilterBackend):
         if 'search' not in request.query_params:
             return queryset
         desired = request.query_params['search']
-        queryset = queryset.filter(name__istartswith=desired).order_by('name')
-        return queryset
+        return queryset.filter(name__istartswith=desired).order_by('name')
 
 
 class IsFavoritedFilter(filters.BaseFilterBackend):
@@ -28,8 +26,7 @@ class IsFavoritedFilter(filters.BaseFilterBackend):
         if int(request.query_params.get('is_favorited')) == 0:
             queryset = queryset.exclude(users__user=request.user)
             return queryset
-        queryset = queryset.filter(users__user=request.user)
-        return queryset
+        return queryset.filter(users__user=request.user)
 
 
 class IsINShoppingcartFilter(filters.BaseFilterBackend):
@@ -44,8 +41,7 @@ class IsINShoppingcartFilter(filters.BaseFilterBackend):
         if int(request.query_params.get('is_in_shopping_cart')) == 0:
             queryset = queryset.exclude(shopping_carts__user=request.user)
             return queryset
-        queryset = queryset.filter(shopping_carts__user=request.user)
-        return queryset
+        return queryset.filter(shopping_carts__user=request.user)
 
 
 class TagFilter(FilterSet):
