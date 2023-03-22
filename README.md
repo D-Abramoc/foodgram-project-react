@@ -1,4 +1,32 @@
 # praktikum_new_diplom
+## Подготовка postgresql
+- Установите postgresql
+```
+sudo apt update
+```
+```
+sudo apt install postgresql postgresql-contrib -y
+```
+- Подключитесь к СУБД
+```
+sudo -u postgres psql
+```
+- Создайте базу. Имя должно быть такое же какое будете создавать в окружении. Пример в файле .env.sample в корневом каталоге.
+```
+CREATE DATABASE <имя-базы>;
+```
+- Создайте пользователя и пароль. Также должны совпадать с данными окружения.
+```
+CREATE USER <логин-для-подключения-к-базе> WITH ENCRYPTED PASSWORD '<пароль-для-подключения-к-базе>';
+```
+- Дайте пользователю права на управление базой
+```
+GRANT ALL PRIVILEGES ON DATABASE <имя-базы> TO <логин-для-подключения-к-базе>; 
+```
+- Для возможности запуска тестов определите возможность создания тестовой базы
+```
+ALTER ROLE <логин-для-подключения-к-базе> CREATEDB;
+```
 ## Развертывание на локальной машине
 - Клонировать репозиторий
 ```
@@ -27,7 +55,7 @@ pip install -r requirements.txt
 ```
 cd backend_foodgram/backend_foodgram/
 ```
-- Создать файл окружения и заполнить его по примеру
+- Создать файл окружения и заполнить его по примеру .env.sample
 ```
 touch .env
 ```
@@ -48,6 +76,14 @@ python manage.py createsuperuser
 ```
 python manage.py runserver
 ```
-
+## Запуск документации API
+- Перейдите в каталог infra в корневом каталоге foodgram-project-react и выполите команду
+```
+sudo docker-compose up
+```
+- Документация API доступна по адресу
+```
+http://localhost/api/docs/
+```
 ## Автор
 ![Me](image/me.JPG)
