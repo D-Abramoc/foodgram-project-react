@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 class OnlyGetRouter(DefaultRouter):
     """
-    Router class that have only GET mathod
+    Router class that have only GET method
     """
     def get_method_map(self, viewset, method_map):
         bound_methods = super().get_method_map(viewset, method_map)

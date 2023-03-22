@@ -6,6 +6,9 @@ from recipes.models import Recipe
 
 
 class IngredientFilter(filters.BaseFilterBackend):
+    '''
+    Фильтр для поиска ингредиента по начальным буквам. Регистронезависимый.
+    '''
     allowed_fields = ('name',)
 
     def filter_queryset(self, request, queryset, view):
@@ -16,6 +19,10 @@ class IngredientFilter(filters.BaseFilterBackend):
 
 
 class IsFavoritedFilter(filters.BaseFilterBackend):
+    '''
+    Фильтр для выборки рецептов по критерию добавлен/не добавлен
+    в избранное.
+    '''
 
     def filter_queryset(self, request, queryset, view):
         if 'is_favorited' not in request.query_params:
@@ -31,6 +38,10 @@ class IsFavoritedFilter(filters.BaseFilterBackend):
 
 
 class IsInShoppingcartFilter(filters.BaseFilterBackend):
+    '''
+    Фильтр для выборки рецептов по критерию добавлен/не добавлен
+    в список покупок.
+    '''
 
     def filter_queryset(self, request, queryset, view):
         if 'is_in_shopping_cart' not in request.query_params:
@@ -46,6 +57,9 @@ class IsInShoppingcartFilter(filters.BaseFilterBackend):
 
 
 class TagFilter(FilterSet):
+    '''
+    Фильтр для поиска по тегам
+    '''
     tags = CharFilter(field_name='tags__slug')
     author = CharFilter(field_name='author__id')
 

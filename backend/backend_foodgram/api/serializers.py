@@ -37,6 +37,10 @@ class Base64ImageField(serializers.ImageField):
 
 
 class SubscribeTrueOrFalseSerializer(serializers.ModelSerializer):
+    '''
+    Проверяет подписан или нет текущий юзер на автора. Если подписан
+    возвращает True, иначе возвращает False
+    '''
     author = serializers.IntegerField(source='author.pk', required=False)
     subscriber = serializers.IntegerField(source='subscriber.pk',
                                           required=False)
@@ -53,6 +57,10 @@ class SubscribeTrueOrFalseSerializer(serializers.ModelSerializer):
 
 
 class SpecialUserSerializer(UserSerializer):
+    '''
+    Возвращает данные пользователя с отметкой подписан или нет
+    на этого пользователя текущий пользователь.
+    '''
     is_subscribed = SubscribeTrueOrFalseSerializer(source='subscribers')
 
     class Meta:
@@ -62,6 +70,10 @@ class SpecialUserSerializer(UserSerializer):
 
 
 class QuantitySerializer(serializers.ModelSerializer):
+    '''
+    Возвращает ингредиент и его количество в рецепте.
+    В ответе даёт id ингредиента.
+    '''
     ingredient = serializers.CharField(source='ingredient.name',
                                        read_only=True)
     mesurement_unit = serializers.CharField(source='ingredient.measure',
@@ -75,7 +87,6 @@ class QuantitySerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Ingredient
         fields = '__all__'
@@ -88,6 +99,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    '''
+    Возвращает True если рецепт добавлен в избранное, иначе False.
+    '''
     user = serializers.ImageField(source='user.pk', required=False)
     recipe = serializers.IntegerField(source='recipe.pk', required=False)
 
@@ -103,6 +117,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
+    '''
+    Возвращает True если рецепт добавлен в список покупок, иначе False.
+    '''
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     recipes = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -118,6 +135,9 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    '''
+    Сериализатор для SAFE запросов.
+    '''
     is_in_shopping_cart = ShoppingCartSerializer(source='shopping_carts')
     is_favorited = FavoriteSerializer(source='users')
     author = SpecialUserSerializer()
@@ -133,6 +153,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
+    '''
+    Сериализатор для POST и PATCH запросов.
+    '''
     author = serializers.PrimaryKeyRelatedField(
         default=serializers.CurrentUserDefault(),
         read_only=True
@@ -196,6 +219,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
 
 class FilterRecipesLimitSerializer(serializers.ListSerializer):
+    '''
+    Фильтр для вложенного сериализатора. Ограничивает количество рецептов
+    автора показываемых в ответе.
+    '''
     def to_representation(self, data):
         if 'recipes_limit' not in self.context.get('request').query_params:
             return super().to_representation(data)
@@ -206,6 +233,9 @@ class FilterRecipesLimitSerializer(serializers.ListSerializer):
 
 
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
+    '''
+    Вложенный сериализатор. Возвращает рецепты автора.
+    '''
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
@@ -213,6 +243,9 @@ class RecipeSubscriptionsSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionsSerializer(SpecialUserSerializer):
+    '''
+    Возвращает авторов на которых подписан текущий пользователь.
+    '''
     recipes = RecipeSubscriptionsSerializer(read_only=True, many=True)
     recipes_count = serializers.IntegerField()
 
@@ -223,7 +256,10 @@ class SubscriptionsSerializer(SpecialUserSerializer):
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
-
+    '''
+    Создаёт подписку на автора. Валидирует повторную подписку и подписку
+    на самого себя.
+    '''
     class Meta:
         model = Subscribe
         fields = '__all__'
