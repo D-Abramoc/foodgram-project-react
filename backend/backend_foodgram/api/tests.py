@@ -1,11 +1,11 @@
 from http import HTTPStatus
 from io import TextIOWrapper
 
-from recipes.models import (Tag, Recipe, Ingredient, Quantity)
-from users.models import CustomUser
-from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient, APITestCase
 
+from recipes.models import Ingredient, Quantity, Recipe, Tag
+from users.models import CustomUser
 
 KEYS = {
     'user': ('id', 'first_name', 'last_name', 'email', 'username',
@@ -18,7 +18,7 @@ KEYS = {
 }
 
 
-class API_Test(APITestCase):
+class APITest(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -76,7 +76,7 @@ class API_Test(APITestCase):
                 amount=150
             )
             ingredients = (Ingredient.objects.get(pk=i.pk).pk,
-                           Ingredient.objects.get(pk=i.pk+1).pk)
+                           Ingredient.objects.get(pk=i.pk + 1).pk)
             i.ingredients.set(ingredients)
             i.tags.set(Tag.objects.filter(pk=cls.tag.pk))
 

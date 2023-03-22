@@ -1,11 +1,10 @@
-from django.urls import include, re_path, path
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import include, path, re_path
 from rest_framework import routers
+
 from . import views
 from .custom_routers import OnlyGetRouter
-
-from django.conf.urls.static import static
-from django.conf import settings
-
 
 app_name = 'api'
 

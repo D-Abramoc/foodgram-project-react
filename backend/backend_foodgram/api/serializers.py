@@ -3,10 +3,11 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.utils import IntegrityError
 from djoser.serializers import UserSerializer
-from recipes.models import (Ingredient, FavoriteRecipe, Quantity, Recipe,
-                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
+from recipes.models import (FavoriteRecipe, Ingredient, Quantity, Recipe,
+                            ShoppingCart, Tag)
 from users.models import CustomUser, Subscribe
 
 
@@ -191,8 +192,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         serializer = RecipeSerializer(context=self.context)
-        representation = serializer.to_representation(instance)
-        return representation
+        return serializer.to_representation(instance)
 
 
 class FilterRecipesLimitSerializer(serializers.ListSerializer):
@@ -202,8 +202,7 @@ class FilterRecipesLimitSerializer(serializers.ListSerializer):
         recipes_limit = int(
             self.context.get('request').query_params.get('recipes_limit')
         )
-        representation = super().to_representation(data)[:recipes_limit]
-        return representation
+        return super().to_representation(data)[:recipes_limit]
 
 
 class RecipeSubscriptionsSerializer(serializers.ModelSerializer):

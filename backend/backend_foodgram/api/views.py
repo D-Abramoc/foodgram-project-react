@@ -1,27 +1,27 @@
+from django.db.models import Count, Sum
+from django.shortcuts import get_list_or_404, get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.serializers import UserSerializer
+from djoser.views import UserViewSet
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Count, Sum
-from django.shortcuts import get_object_or_404, get_list_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
-from djoser.serializers import UserSerializer
 
-from .serializers import (IngredientSerializer, AnonimusRecipeSerializer,
-                          FavoritePostDeleteSerializer,
-                          CustomUserCreateSerializer,
-                          RecipeSerializer, TagSerializer,
-                          SubscribeSerializer, SubscriptionsSerializer,
-                          RecipeCreateSerializer, SimpleRecipeSerializer,
-                          ShoppingCartPostDeleteSerializer,
-                          SpecialUserSerializer)
-from .custom_pagination import PageLimitPagination
-from .custom_filters import (IngredientFilter, IsFavoritedFilter,
-                             IsINShoppingcartFilter, TagFilter)
-from .permissions import IsOwnerOrAdminOrReadOnly
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
+
+from .custom_filters import (IngredientFilter, IsFavoritedFilter,
+                             IsInShoppingcartFilter, TagFilter)
+from .custom_pagination import PageLimitPagination
+from .permissions import IsOwnerOrAdminOrReadOnly
+from .serializers import (AnonimusRecipeSerializer, CustomUserCreateSerializer,
+                          FavoritePostDeleteSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeSerializer,
+                          ShoppingCartPostDeleteSerializer,
+                          SimpleRecipeSerializer, SpecialUserSerializer,
+                          SubscribeSerializer, SubscriptionsSerializer,
+                          TagSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -164,7 +164,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = PageLimitPagination
     permission_classes = (IsOwnerOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, IsFavoritedFilter,
-                       IsINShoppingcartFilter)
+                       IsInShoppingcartFilter)
     filterset_class = TagFilter
     http_method_names = ('get', 'post', 'patch', 'delete')
 

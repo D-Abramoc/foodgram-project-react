@@ -1,7 +1,8 @@
 from django_filters.rest_framework import CharFilter, FilterSet
-from recipes.models import Recipe
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError
+
+from recipes.models import Recipe
 
 
 class IngredientFilter(filters.BaseFilterBackend):
@@ -29,7 +30,7 @@ class IsFavoritedFilter(filters.BaseFilterBackend):
         return queryset.filter(users__user=request.user)
 
 
-class IsINShoppingcartFilter(filters.BaseFilterBackend):
+class IsInShoppingcartFilter(filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         if 'is_in_shopping_cart' not in request.query_params:
