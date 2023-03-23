@@ -1,8 +1,7 @@
 from django_filters.rest_framework import CharFilter, FilterSet
+from recipes.models import Recipe
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError
-
-from recipes.models import Recipe
 
 
 class IngredientFilter(filters.BaseFilterBackend):

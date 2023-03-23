@@ -3,11 +3,10 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.utils import IntegrityError
 from djoser.serializers import UserSerializer
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-
 from recipes.models import (FavoriteRecipe, Ingredient, Quantity, Recipe,
                             ShoppingCart, Tag)
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from users.models import CustomUser, Subscribe
 
 

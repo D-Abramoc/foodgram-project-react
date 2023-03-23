@@ -1,10 +1,9 @@
 from http import HTTPStatus
 from io import TextIOWrapper
 
+from recipes.models import Ingredient, Quantity, Recipe, ShoppingCart, Tag
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
-
-from recipes.models import Ingredient, Quantity, Recipe, Tag
 from users.models import CustomUser
 
 KEYS = {
@@ -152,11 +151,15 @@ class APITest(APITestCase):
             'email': 'pirat_too@fake.fake',
             'password': 'pass__word'
         }
+        numder_of_shoppingcarts = ShoppingCart.objects.count()
         # Registration of new user
         response = self.client.post(
             '/api/users/', data=data
         )
         self.assertEqual(CustomUser.objects.count(), number_of_users + 1)
+        self.assertEqual(
+            ShoppingCart.objects.count(), numder_of_shoppingcarts + 1
+        )
         data = {
             'email': 'pirat_too@fake.fake',
             'password': 'pass__word'
