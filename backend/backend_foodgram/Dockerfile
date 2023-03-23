@@ -7,7 +7,7 @@ COPY . .
 RUN apt-get update -y \
 && apt-get upgrade -y
 
-RUN pip install -r ./requirements.txt
+RUN pip install -r requirements.txt
 # && pip install --upgrade pip \
 # && pip install -r /app/requirements.txt --no-cache-dir
 
