@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.core.signals import setting_changed
 
 
 class UsersConfig(AppConfig):
@@ -7,4 +8,5 @@ class UsersConfig(AppConfig):
     verbose_name = 'Пользователи'
 
     def ready(self):
-        import users.signals
+        from .signals import create_profile
+        setting_changed.connect(create_profile)
