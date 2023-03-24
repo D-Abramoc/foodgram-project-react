@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY /home/dmitry/Dev/Diploma/foodgram-project-react/backend/backend_foodgram/requirements.txt .
+COPY requirements.txt .
 # COPY . ./requirements.txt
 # RUN apt-get update -y \
 # && apt-get upgrade -y
