@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY . .
+COPY . ./app
 # COPY . ./requirements.txt
 # RUN apt-get update -y \
 # && apt-get upgrade -y
