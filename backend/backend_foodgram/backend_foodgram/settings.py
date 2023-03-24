@@ -12,7 +12,7 @@ SECRET_KEY = 'sgdfgn,rstnmeopsmbpasd'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['84.201.155.156']
 
 
 INSTALLED_APPS = [
