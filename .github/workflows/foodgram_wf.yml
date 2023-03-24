@@ -95,6 +95,8 @@ jobs:
           script: |
             # Выполняет pull образа с DockerHub
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_back
+            touch .env
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }}
             #остановка всех контейнеров
             sudo docker stop $(sudo docker ps -a -q)
             sudo docker run --rm -d -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/foodgram_back
