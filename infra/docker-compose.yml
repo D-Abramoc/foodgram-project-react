@@ -16,7 +16,7 @@ services:
       - ./.env
 
   web:
-    image: abramovdmitry/foodgram:latest
+    image: abramovdmitry/foodgram
     restart: always
     volumes:
       - static_value:/app/static/
