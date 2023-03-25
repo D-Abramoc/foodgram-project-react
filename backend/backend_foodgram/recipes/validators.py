@@ -10,10 +10,8 @@ def validate_minimum(value):
 
 
 def validate_string(value):
-    try:
-        value = int(value)
-    except ValueError:
-        return value
-    raise ValidationError(
-        'Текст не может состоять из одних цифр'
-    )
+    if value.isnumeric():
+        raise ValidationError(
+            'Текст не может состоять из одних цифр'
+        )
+    return value
