@@ -93,7 +93,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            if [ $(sudo docker container ls | wc -l) -gt 1 ];
+            if [ $(sudo docker container ls | wc -l) -gt 1 ] ;
             then $(sudo docker-compose stop && sudo docker-compose rm web);
             fi
             # sudo docker-compose stop
