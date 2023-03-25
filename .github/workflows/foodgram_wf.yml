@@ -93,11 +93,11 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            if $(sudo docker container ls | wc -l) -gt 1
-            then sudo docker-compose stop && sudo docker-compose rm web
-            fi
-            # sudo docker-compose stop
-            # sudo docker-compose rm web
+            # if $(sudo docker container ls | wc -l) -gt 1
+            # then sudo docker-compose stop && sudo docker-compose rm web
+            # fi
+            sudo docker-compose stop
+            sudo docker-compose rm web
             touch .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
