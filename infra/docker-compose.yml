@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 services:
 
   frontend:
@@ -16,7 +16,7 @@ services:
       - ./.env
 
   web:
-    image: abramovdmitry/foodgram
+    image: abramovdmitry/foodgram_back
     restart: always
     volumes:
       - static_value:/app/static/
