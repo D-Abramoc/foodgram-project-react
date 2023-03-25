@@ -7,7 +7,7 @@ from .validators import validate_minimum, validate_string
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
-                            verbose_name='Название')
+                            verbose_name='Название', unique=True)
     measure = models.CharField(max_length=settings.MAX_LENGTH_MEASURE,
                                verbose_name='Единицы измерения')
 
