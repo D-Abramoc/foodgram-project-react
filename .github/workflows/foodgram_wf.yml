@@ -96,7 +96,7 @@ jobs:
             # if $(sudo docker container ls | wc -l) -gt 1
             # then sudo docker-compose stop && sudo docker-compose rm web
             # fi
-            if sudo docker-compose stop
+            if [ sudo docker-compose stop ]
             then sudo docker-compose rm web
             fi
             touch .env
