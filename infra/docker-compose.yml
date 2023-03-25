@@ -6,7 +6,7 @@ services:
     #   context: ../frontend
     #   dockerfile: Dockerfile
     image: abramovdmitry/foodgram_front
-    restart: always
+    # restart: always
     volumes:
       - ../frontend/:/app/result_build/
 
