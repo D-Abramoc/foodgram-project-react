@@ -8,7 +8,7 @@ from .validators import validate_minimum, validate_string
 class Ingredient(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                             verbose_name='Название')
-    measure = models.CharField(max_length=settings.MAX_LENGTH_NAME,
+    measure = models.CharField(max_length=settings.MAX_LENGTH_MEASURE,
                                verbose_name='Единицы измерения')
 
     class Meta:
@@ -50,7 +50,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient, through='Quantity',
                                          related_name='recipes')
     tags = models.ManyToManyField(Tag, related_name='recipes')
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
         validators=(validate_minimum, )
     )
