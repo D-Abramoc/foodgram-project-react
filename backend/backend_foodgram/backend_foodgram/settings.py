@@ -27,12 +27,14 @@ INSTALLED_APPS = [
     'api',
     'djoser',
     'rest_framework.authtoken',
-    'django_filters'
+    'django_filters',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -144,3 +146,7 @@ MAX_LENGTH_CHARFIELD_CUSTOMUSER: int = 150
 MAX_LENGTH_NAME = 200
 MAX_LENGTH_HEX_COLOR = 7
 MAX_LENGTH_MEASURE = 20
+
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8000',
+]
