@@ -2,10 +2,10 @@ version: '3.3'
 services:
 
   frontend:
-    # build:
-    #   context: ../frontend
-    #   dockerfile: Dockerfile
-    image: abramovdmitry/foodgram_front:latest
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    # image: abramovdmitry/foodgram_front:latest
     # restart: always
     volumes:
       - ../frontend/:/app/result_build/
