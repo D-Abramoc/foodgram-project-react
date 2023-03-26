@@ -39,5 +39,5 @@
     ]
   },
   "proxy": "http://web:8000/",
-  "homepage": ""
+  "homepage": "."
 }
