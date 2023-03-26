@@ -5,7 +5,7 @@ services:
     # build:
     #   context: ../frontend
     #   dockerfile: Dockerfile
-    image: abramovdmitry/foodgram_front
+    image: abramovdmitry/foodgram_front:latest
     # restart: always
     volumes:
       - ../frontend/:/app/result_build/
@@ -18,7 +18,7 @@ services:
       - ./.env
 
   web:
-    image: abramovdmitry/foodgram_back
+    image: abramovdmitry/foodgram_back:latest
     restart: always
     volumes:
       - static_value:/app/static/
