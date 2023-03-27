@@ -73,8 +73,7 @@ class QuantitySerializer(serializers.ModelSerializer):
     Возвращает ингредиент и его количество в рецепте.
     В ответе даёт id ингредиента.
     '''
-    ingredient = serializers.CharField(source='ingredient.name',
-                                       read_only=True)
+    name = serializers.CharField(source='ingredient.name', read_only=True)
     measurement_unit = serializers.CharField(source='ingredient.measure',
                                              read_only=True)
     id = serializers.PrimaryKeyRelatedField(source='ingredient.pk',
@@ -82,7 +81,7 @@ class QuantitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quantity
-        fields = ('id', 'ingredient', 'amount', 'measurement_unit')
+        fields = ('id', 'name', 'amount', 'measurement_unit')
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
