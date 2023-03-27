@@ -64,4 +64,7 @@ class TagFilter(FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author')
+        fields = {
+            'tags': ['exact', 'contains'],
+            'author': ['exact']
+        }
