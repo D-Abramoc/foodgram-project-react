@@ -293,11 +293,15 @@ class AnonimusRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(read_only=True)
     cooking_time = serializers.IntegerField(read_only=True)
     tags = TagSerializer(many=True)
+    ingredients = QuantitySerializer(
+        source='quantity_set',
+        many=True
+    )
 
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time', 'author', 'text',
-                  'tags')
+                  'tags', 'ingredients')
 
 
 class ShoppingCartPostDeleteSerializer(serializers.ModelSerializer):
