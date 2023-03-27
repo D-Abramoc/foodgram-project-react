@@ -55,16 +55,26 @@ class IsInShoppingcartFilter(filters.BaseFilterBackend):
         return queryset.filter(shopping_carts__user=request.user)
 
 
-class TagFilter(FilterSet):
+class TagFilter(filters.BaseFilterBackend):
     '''
-    Фильтр для поиска по тегам
+    Фильтр по тегам
     '''
-    tags = CharFilter(field_name='tags__slug')
+
+    def filter_queryset(self, request, queryset, view):
+        if 'tags' not in request.query_params:
+            return queryset
+        return queryset.filter(
+            tags__slug__in=request.query_params.getlist('tags')
+        )
+
+
+class AuthorFilter(FilterSet):
+    '''
+    Фильтр для поиска по автору
+    '''
+    # tags = CharFilter(field_name='tags__slug')
     author = CharFilter(field_name='author__id')
 
     class Meta:
         model = Recipe
-        fields = {
-            'tags': ['exact', 'contains'],
-            'author': ['exact']
-        }
+        fields = ('author',)

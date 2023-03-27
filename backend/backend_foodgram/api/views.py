@@ -6,11 +6,11 @@ from djoser.views import UserViewSet
 from recipes.models import Ingredient, Recipe, Tag
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import CustomUser
 
-from .custom_filters import (IngredientFilter, IsFavoritedFilter,
+from .custom_filters import (AuthorFilter, IngredientFilter, IsFavoritedFilter,
                              IsInShoppingcartFilter, TagFilter)
 from .custom_pagination import PageLimitPagination
 from .permissions import IsOwnerOrAdminOrReadOnly
@@ -163,8 +163,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = PageLimitPagination
     permission_classes = (IsOwnerOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, IsFavoritedFilter,
-                       IsInShoppingcartFilter)
-    filterset_class = TagFilter
+                       IsInShoppingcartFilter, TagFilter)
+    filterset_class = AuthorFilter
     http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_serializer_class(self):

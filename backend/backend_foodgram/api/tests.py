@@ -497,9 +497,19 @@ class APITest(APITestCase):
         for result in response.data['results']:
             with self.subTest(result=result):
                 self.assertEqual(result['is_in_shopping_cart'], False)
-
-    def test_recipe_patch(self):
-        ...
+        # tags
+        response = self.auth_client.get(
+            '/api/recipes/?page=1&limit=6&tags=slug1'
+        )
+        print(response)
+        response = self.auth_client.get(
+            '/api/recipes/?page=1&limit=6&tags=slug1&tags=slug_2'
+        )
+        print(response)
+        response = self.auth_client.get(
+            '/api/recipes/?page=1&limit=6&tags=slug_1&tags=slug_2&tags=slug_3'
+        )
+        print(response)
 
     def test_shopping_cart(self):
         # add to shopping_cart
