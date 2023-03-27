@@ -12,8 +12,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['84.201.155.156', '127.0.0.1',
-                 'web']
+                 'web', '158.160.60.18','[::1]']
 
+CSRF_TRUSTED_ORIGINS = ['http://*.158.160.60.18/*','http://*.127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -100,8 +101,8 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',

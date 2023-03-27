@@ -1,14 +1,6 @@
-version: '3.3'
+version: '3.8'
 services:
 
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    # image: abramovdmitry/foodgram_front:latest
-    # restart: always
-    volumes:
-      - ../frontend/:/app/result_build/
 
   db:
     image: postgres:13.0-alpine
@@ -18,7 +10,7 @@ services:
       - ./.env
 
   web:
-    image: abramovdmitry/foodgram_back:latest
+    build: ../backend/backend_foodgram/
     restart: always
     volumes:
       - static_value:/app/static/
@@ -27,6 +19,15 @@ services:
       - db
     env_file:
       - ./.env
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    # image: abramovdmitry/foodgram_front:latest
+    # restart: always
+    volumes:
+      - ../frontend/:/app/result_build/
 
   nginx:
     image: nginx:1.19.3
