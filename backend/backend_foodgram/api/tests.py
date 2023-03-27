@@ -114,6 +114,7 @@ class APITest(APITestCase):
         Доступность страниц для анонимного пользователя
         """
         recipe = Recipe.objects.first()
+        recipe.tags.add(Tag.objects.get(slug='slug_2'))
         user = CustomUser.objects.first()
         tag = Tag.objects.first()
         ingredient = Ingredient.objects.first()
