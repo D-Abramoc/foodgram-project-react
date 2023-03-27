@@ -286,7 +286,8 @@ class SimpleRecipeSerializer(serializers.ModelSerializer):
 
 
 class AnonimusRecipeSerializer(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    # author = serializers.PrimaryKeyRelatedField(read_only=True)
+    author = UserSerializer(read_only=True)
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     name = serializers.CharField(read_only=True)
     image = Base64ImageField(read_only=True)
