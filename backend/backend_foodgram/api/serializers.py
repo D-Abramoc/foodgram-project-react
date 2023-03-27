@@ -75,14 +75,18 @@ class QuantitySerializer(serializers.ModelSerializer):
     '''
     ingredient = serializers.CharField(source='ingredient.name',
                                        read_only=True)
-    mesurement_unit = serializers.CharField(source='ingredient.measure',
-                                            read_only=True)
+    measurement_unit = serializers.CharField(source='ingredient.measure',
+                                             read_only=True)
     id = serializers.PrimaryKeyRelatedField(source='ingredient.pk',
                                             queryset=Ingredient.objects.all())
 
     class Meta:
         model = Quantity
-        fields = ('id', 'ingredient', 'amount', 'mesurement_unit')
+        fields = ('id', 'ingredient', 'amount', 'measurement_unit')
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        return response
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -302,6 +306,10 @@ class AnonimusRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time', 'author', 'text',
                   'tags', 'ingredients')
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        return response
 
 
 class ShoppingCartPostDeleteSerializer(serializers.ModelSerializer):

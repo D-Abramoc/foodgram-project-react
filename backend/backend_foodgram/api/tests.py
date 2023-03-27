@@ -12,7 +12,7 @@ KEYS = {
     'recipe': ('id', 'is_in_shopping_cart', 'is_favorited', 'author',
                'tags', 'ingredients', 'name', 'image', 'text',
                'cooking_time'),
-    'recipe_ingredients': ('id', 'ingredient', 'amount', 'mesurement_unit'),
+    'recipe_ingredients': ('id', 'ingredient', 'amount', 'measurement_unit'),
     'recipe_tags': ('id', 'name', 'color', 'slug')
 }
 
