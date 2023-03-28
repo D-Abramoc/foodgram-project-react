@@ -84,10 +84,6 @@ class QuantitySerializer(serializers.ModelSerializer):
         model = Quantity
         fields = ('id', 'name', 'amount', 'measurement_unit')
 
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        return response
-
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -114,9 +110,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         currentuser = self.context.get('request').user
-        if instance.instance.users.filter(user=currentuser):
-            return True
-        return False
+        if currentuser.is_anonymous:
+            return False
+        return instance.instance.users.filter(user=currentuser).exists()
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
@@ -132,9 +128,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         currentuser = self.context.get('request').user
-        if instance.instance.shopping_carts.filter(user=currentuser):
-            return True
-        return False
+        if currentuser.is_anonymous:
+            False
+        return (instance.instance
+                .shopping_carts.filter(user=currentuser).exists())
 
 
 class RecipeSerializer(serializers.ModelSerializer):

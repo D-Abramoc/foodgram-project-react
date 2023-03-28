@@ -23,8 +23,6 @@ from .serializers import (AnonimusRecipeSerializer, CustomUserCreateSerializer,
 
 
 class CustomUserViewSet(UserViewSet):
-    queryset = CustomUser.objects.all()
-    # permission_classes = (IsOwnerOrAdminOrReadOnly,)
 
     @action(
         methods=['GET', ],
@@ -39,11 +37,8 @@ class CustomUserViewSet(UserViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_serializer_class(self):
-        if self.request.user.is_anonymous:
-            if self.request.method == 'POST':
-                return CustomUserCreateSerializer
-            # return UserSerializer
-            return super().get_serializer_class()
+        if self.request.user.is_anonymous and self.request.method == 'POST':
+            return CustomUserCreateSerializer
         return super().get_serializer_class()
 
 
