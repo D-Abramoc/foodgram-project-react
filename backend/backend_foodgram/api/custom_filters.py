@@ -65,7 +65,7 @@ class TagFilter(filters.BaseFilterBackend):
             return queryset
         return queryset.filter(
             tags__slug__in=request.query_params.getlist('tags')
-        )
+        ).distinct()
 
 
 class AuthorFilter(FilterSet):
