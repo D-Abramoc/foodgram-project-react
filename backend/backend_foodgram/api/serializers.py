@@ -169,7 +169,27 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if not attrs['quantity_set']:
-            raise ValidationError('You need add any ingredients')
+            raise ValidationError('You need add any ingredients.')
+        ingredients = []
+        for item in attrs['quantity_set']:
+            ingredient = item['ingredient']['pk']
+            ingredients.append(ingredient)
+            if item['amount'] <= 0:
+                raise ValidationError('Количество не может быть 0 или '
+                                      'отрицательным значением.')
+        if len(ingredients) != len(set(ingredients)):
+            raise ValidationError('Ингредиенты не должны повторяться.')
+        ingredients_id_for_check = [
+            ingredient.pk for ingredient in ingredients
+        ]
+        if not Ingredient.objects.filter(pk__in=ingredients_id_for_check):
+            raise ValidationError('Проверьте, что ингредиенты '
+                                  'существуют в базе')
+        if len(attrs['tags']) != len(set(attrs['tags'])):
+            raise ValidationError('Теги не должны повторяться')
+        tags_for_check = [tag.pk for tag in attrs['tags']]
+        if not Tag.objects.filter(pk__in=tags_for_check).exists():
+            raise ValidationError('Проверьте, что теги существуют.')
         return super().validate(attrs)
 
     def create(self, validated_data):
