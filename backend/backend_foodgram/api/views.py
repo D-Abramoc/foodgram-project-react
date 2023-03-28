@@ -1,7 +1,6 @@
 from django.db.models import Count, Sum
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.serializers import UserSerializer
 from djoser.views import UserViewSet
 from recipes.models import Ingredient, Recipe, Tag
 from rest_framework import status, viewsets
@@ -43,7 +42,8 @@ class CustomUserViewSet(UserViewSet):
         if self.request.user.is_anonymous:
             if self.request.method == 'POST':
                 return CustomUserCreateSerializer
-            return UserSerializer
+            # return UserSerializer
+            return super().get_serializer_class()
         return super().get_serializer_class()
 
 

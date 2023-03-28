@@ -50,9 +50,10 @@ class SubscribeTrueOrFalseSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         currentuser = self.context.get('request').user
-        if instance.instance.subscribers.filter(subscriber=currentuser):
-            return True
-        return False
+        if currentuser.is_anonymous:
+            return False
+        return (instance.instance
+                .subscribers.filter(subscriber=currentuser).exists())
 
 
 class SpecialUserSerializer(UserSerializer):
