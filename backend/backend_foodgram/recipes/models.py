@@ -30,7 +30,7 @@ class Tag(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                             verbose_name='Тег', unique=True)
     color = models.CharField(max_length=settings.MAX_LENGTH_HEX_COLOR,
-                             verbose_name='Цвет', unique=True,
+                             verbose_name='Цвет', unique=False,
                              choices=COLOR_CHOICES)
     slug = models.SlugField(unique=True, verbose_name='SLUG',
                             max_length=settings.MAX_LENGTH_NAME)
