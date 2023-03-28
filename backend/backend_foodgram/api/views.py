@@ -24,6 +24,7 @@ from .serializers import (AnonimusRecipeSerializer, CustomUserCreateSerializer,
 
 
 class CustomUserViewSet(UserViewSet):
+    permission_classes = (IsOwnerOrAdminOrReadOnly,)
 
     @action(
         methods=['GET', ],
