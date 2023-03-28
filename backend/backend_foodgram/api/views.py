@@ -24,6 +24,7 @@ from .serializers import (AnonimusRecipeSerializer, CustomUserCreateSerializer,
 
 
 class CustomUserViewSet(UserViewSet):
+    queryset = CustomUser.objects.all()
     permission_classes = (IsOwnerOrAdminOrReadOnly,)
 
     @action(
