@@ -324,10 +324,6 @@ class AnonimusRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time', 'author', 'text',
                   'tags', 'ingredients')
 
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        return response
-
 
 class ShoppingCartPostDeleteSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
