@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from recipes.models import Ingredient, Recipe, Tag
 from rest_framework import status, viewsets
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import CustomUser
@@ -41,6 +41,31 @@ class CustomUserViewSet(UserViewSet):
             return CustomUserCreateSerializer
         return super().get_serializer_class()
 
+    @action(methods=('POST', 'DELETE'), detail=True, url_name='subscribe',
+            permission_classes=(IsAuthenticated,))
+    def subscribe(self, request, id):
+        if request.method == 'DELETE':
+            request.user.authors.filter(author__pk=id).delete()
+            return Response('Подписка отменена',
+                            status=status.HTTP_204_NO_CONTENT)
+        request.data.clear()
+        request.data['subscriber'] = (
+            get_object_or_404(CustomUser, pk=request.user.pk).pk
+        )
+        request.data['author'] = get_object_or_404(CustomUser, pk=id).pk
+        serializer = SubscribeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        serializer = SubscriptionsSerializer(
+            (
+                CustomUser.objects.annotate(recipes_count=Count('recipes'))
+                .order_by('username')
+                .get(pk=serializer.validated_data['author'].pk)
+            ),
+            context={'request': request},
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubscriptionsSerializer
@@ -56,96 +81,98 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
 
-@api_view(['GET', ])
-@permission_classes([IsAuthenticated, ])
-def download_shopping_cart(request):
-    result = (Ingredient.objects.values('name')
-              .filter(recipes__in=request.user.shoppingcart.recipes.all())
-              .annotate(ingredient_sum=Sum('quantity__amount')))
-    with open('result.txt', 'w') as f:
-        for item in result:
-            key, value = item.values()
-            row = f'{key}: {value}\n'
-            f.write(row)
-    f = open('result.txt', 'r')
-    return Response(f, content_type='text/plane', status=status.HTTP_200_OK)
+# @api_view(['GET', ])
+# @permission_classes([IsAuthenticated, ])
+# def download_shopping_cart(request):
+#     result = (Ingredient.objects.values('name')
+#               .filter(recipes__in=request.user.shoppingcart.recipes.all())
+#               .annotate(ingredient_sum=Sum('quantity__amount')))
+#     with open('result.txt', 'w') as f:
+#         for item in result:
+#             key, value = item.values()
+#             row = f'{key}: {value}\n'
+#             f.write(row)
+#     f = open('result.txt', 'r')
+#     return Response(f, content_type='text/plane', status=status.HTTP_200_OK)
 
 
-@api_view(['POST', 'DELETE'])
-@permission_classes([IsAuthenticated, ])
-def subscribe(request, id):
-    if request.method == 'DELETE':
-        request.user.authors.filter(author__pk=id).delete()
-        return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
-    request.data.clear()
-    request.data['subscriber'] = (
-        get_object_or_404(CustomUser, pk=request.user.pk).pk
-    )
-    request.data['author'] = get_object_or_404(CustomUser, pk=id).pk
-    serializer = SubscribeSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    serializer = SubscriptionsSerializer(
-        (
-            CustomUser.objects.annotate(recipes_count=Count('recipes'))
-            .order_by('username')
-            .get(pk=serializer.validated_data['author'].pk)
-        ),
-        context={'request': request},
-    )
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+# @api_view(['POST', 'DELETE'])
+# @permission_classes([IsAuthenticated, ])
+# def subscribe(request, id):
+#     if request.method == 'DELETE':
+#         request.user.authors.filter(author__pk=id).delete()
+#         return Response('Подписка отменена',
+#                          status=status.HTTP_204_NO_CONTENT)
+#     request.data.clear()
+#     request.data['subscriber'] = (
+#         get_object_or_404(CustomUser, pk=request.user.pk).pk
+#     )
+#     request.data['author'] = get_object_or_404(CustomUser, pk=id).pk
+#     serializer = SubscribeSerializer(data=request.data)
+#     serializer.is_valid(raise_exception=True)
+#     serializer.save()
+#     serializer = SubscriptionsSerializer(
+#         (
+#             CustomUser.objects.annotate(recipes_count=Count('recipes'))
+#             .order_by('username')
+#             .get(pk=serializer.validated_data['author'].pk)
+#         ),
+#         context={'request': request},
+#     )
+#     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST', 'DELETE'])
-@permission_classes([IsAuthenticated, ])
-def favorite(request, id):
-    if request.method == 'DELETE':
-        request.user.favorite_recipes.filter(recipe__pk=id).delete()
-        return Response('Подписка отменена', status=status.HTTP_204_NO_CONTENT)
-    request.data.clear()
-    request.data['recipe'] = id
-    serializer = FavoritePostDeleteSerializer(
-        data=request.data, context={'request': request}
-    )
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    data = Recipe.objects.filter(pk=serializer.data.get('recipe'))
-    serializer = SimpleRecipeSerializer(many=True, data=data)
-    serializer.is_valid()
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+# @api_view(['POST', 'DELETE'])
+# @permission_classes([IsAuthenticated, ])
+# def favorite(request, id):
+#     if request.method == 'DELETE':
+#         request.user.favorite_recipes.filter(recipe__pk=id).delete()
+#         return Response('Подписка отменена',
+# status=status.HTTP_204_NO_CONTENT)
+#     request.data.clear()
+#     request.data['recipe'] = id
+#     serializer = FavoritePostDeleteSerializer(
+#         data=request.data, context={'request': request}
+#     )
+#     serializer.is_valid(raise_exception=True)
+#     serializer.save()
+#     data = Recipe.objects.filter(pk=serializer.data.get('recipe'))
+#     serializer = SimpleRecipeSerializer(many=True, data=data)
+#     serializer.is_valid()
+#     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST', 'DELETE'])  # сериалайзер одинаковый, надо рефачить
-@permission_classes([IsAuthenticated, ])
-def shopping_cart(request, id):
-    request.data.clear()
-    request.data['recipes'] = [
-        recipe.pk for recipe in get_list_or_404(Recipe, pk=id)
-    ]
-    if request.method == 'DELETE':
-        request.data['recipes'] = [
-            recipe.pk for recipe in
-            Recipe.objects.filter(shopping_carts__user=request.user)
-            .exclude(pk=id)
-        ]
-        serializer = ShoppingCartPostDeleteSerializer(
-            request.user.shoppingcart, data=request.data,
-            context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response('Рецепт успешно удалён из списка',
-                        status=status.HTTP_204_NO_CONTENT)
-    serializer = ShoppingCartPostDeleteSerializer(
-        request.user.shoppingcart, data=request.data,
-        context={'request': request}
-    )
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    data = Recipe.objects.filter(pk__in=serializer.data.get('recipes'))
-    serializer = SimpleRecipeSerializer(many=True, data=data)
-    serializer.is_valid()
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+# @api_view(['POST', 'DELETE'])  # сериалайзер одинаковый, надо рефачить
+# @permission_classes([IsAuthenticated, ])
+# def shopping_cart(request, id):
+#     request.data.clear()
+#     request.data['recipes'] = [
+#         recipe.pk for recipe in get_list_or_404(Recipe, pk=id)
+#     ]
+#     if request.method == 'DELETE':
+#         request.data['recipes'] = [
+#             recipe.pk for recipe in
+#             Recipe.objects.filter(shopping_carts__user=request.user)
+#             .exclude(pk=id)
+#         ]
+#         serializer = ShoppingCartPostDeleteSerializer(
+#             request.user.shoppingcart, data=request.data,
+#             context={'request': request}
+#         )
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response('Рецепт успешно удалён из списка',
+#                         status=status.HTTP_204_NO_CONTENT)
+#     serializer = ShoppingCartPostDeleteSerializer(
+#         request.user.shoppingcart, data=request.data,
+#         context={'request': request}
+#     )
+#     serializer.is_valid(raise_exception=True)
+#     serializer.save()
+#     data = Recipe.objects.filter(pk__in=serializer.data.get('recipes'))
+#     serializer = SimpleRecipeSerializer(many=True, data=data)
+#     serializer.is_valid()
+#     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -170,6 +197,71 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.user.is_anonymous:
             return AnonimusRecipeSerializer
         return RecipeSerializer
+
+    @action(methods=('POST', 'DELETE'), detail=True,
+            permission_classes=(IsAuthenticated,))
+    def shopping_cart(self, request, pk):
+        request.data.clear()
+        request.data['recipes'] = [
+            recipe.pk for recipe in get_list_or_404(Recipe, pk=pk)
+        ]
+        if request.method == 'DELETE':
+            request.data['recipes'] = [
+                recipe.pk for recipe in
+                Recipe.objects.filter(shopping_carts__user=request.user)
+                .exclude(pk=pk)
+            ]
+            serializer = ShoppingCartPostDeleteSerializer(
+                request.user.shoppingcart, data=request.data,
+                context={'request': request}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response('Рецепт успешно удалён из списка',
+                            status=status.HTTP_204_NO_CONTENT)
+        serializer = ShoppingCartPostDeleteSerializer(
+            request.user.shoppingcart, data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = Recipe.objects.filter(pk__in=serializer.data.get('recipes'))
+        serializer = SimpleRecipeSerializer(many=True, data=data)
+        serializer.is_valid()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(methods=('POST', 'DELETE'), detail=True,
+            permission_classes=(IsAuthenticated,))
+    def favorite(self, request, pk):
+        if request.method == 'DELETE':
+            request.user.favorite_recipes.filter(recipe__pk=pk).delete()
+            return Response('Подписка отменена',
+                            status=status.HTTP_204_NO_CONTENT)
+        request.data.clear()
+        request.data['recipe'] = pk
+        serializer = FavoritePostDeleteSerializer(
+            data=request.data, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = Recipe.objects.filter(pk=serializer.data.get('recipe'))
+        serializer = SimpleRecipeSerializer(many=True, data=data)
+        serializer.is_valid()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, permission_classes=(IsAuthenticated,))
+    def download_shopping_cart(self, request):
+        result = (Ingredient.objects.values('name')
+                  .filter(recipes__in=request.user.shoppingcart.recipes.all())
+                  .annotate(ingredient_sum=Sum('quantity__amount')))
+        with open('result.txt', 'w') as f:
+            for item in result:
+                key, value = item.values()
+                row = f'{key}: {value}\n'
+                f.write(row)
+        f = open('result.txt', 'r')
+        return Response(f, content_type='text/plane',
+                        status=status.HTTP_200_OK)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
