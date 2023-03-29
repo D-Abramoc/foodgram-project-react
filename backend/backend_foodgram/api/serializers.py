@@ -246,9 +246,12 @@ class FilterRecipesLimitSerializer(serializers.ListSerializer):
     def to_representation(self, data):
         if 'recipes_limit' not in self.context.get('request').query_params:
             return super().to_representation(data)
-        recipes_limit = int(
-            self.context.get('request').query_params.get('recipes_limit')
-        )
+        try:
+            recipes_limit = int(
+                self.context.get('request').query_params.get('recipes_limit')
+            )
+        except ValueError:
+            raise ValidationError('recipes_limit должен быть целым числом')
         return super().to_representation(data)[:recipes_limit]
 
 
