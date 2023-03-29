@@ -72,7 +72,6 @@ class AuthorFilter(FilterSet):
     '''
     Фильтр для поиска по автору
     '''
-    # tags = CharFilter(field_name='tags__slug')
     author = CharFilter(field_name='author__id')
 
     class Meta:

@@ -16,6 +16,10 @@ ALLOWED_HOSTS = ['84.201.155.156', '127.0.0.1',
 
 CSRF_TRUSTED_ORIGINS = ['http://*.158.160.60.18/', 'http://*.127.0.0.1']
 
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8000'
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -148,7 +152,11 @@ MAX_LENGTH_CHARFIELD_CUSTOMUSER: int = 150
 MAX_LENGTH_NAME = 200
 MAX_LENGTH_HEX_COLOR = 7
 MAX_LENGTH_MEASURE = 20
+PAGE_SIZE_CUSTOM_PAGINATOR = 6
+MAX_PAGE_SIZE_CUSTOM_PAGINATOR = 20
 
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8000'
-]
+COLOR_CHOICES = (
+    ('#ff0000', 'Red'),
+    ('#00ff00', 'Green'),
+    ('#0000ff', 'Blue')
+)

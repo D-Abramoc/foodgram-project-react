@@ -212,7 +212,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 obj.save()
         return recipe
 
-    def update(self, instance, validated_data):  # refactoring
+    def update(self, instance, validated_data):
         instance.quantity_set.all().delete()
         ingredients = validated_data.pop('quantity_set')
         tags = validated_data.pop('tags')
