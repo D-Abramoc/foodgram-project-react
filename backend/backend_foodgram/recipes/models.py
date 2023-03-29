@@ -5,9 +5,9 @@ from users.models import CustomUser
 from .validators import validate_minimum, validate_string
 
 COLOR_CHOICES = (
-    ('R', '#ff0000'),
-    ('G', '#00ff00'),
-    ('B', '#0000ff')
+    ('#ff0000','Red'),
+    ('#00ff00','Green'),
+    ('#0000ff','Blue')
 )
 
 
@@ -30,7 +30,7 @@ class Tag(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
                             verbose_name='Тег', unique=True)
     color = models.CharField(max_length=settings.MAX_LENGTH_HEX_COLOR,
-                             verbose_name='Цвет', choices=COLOR_CHOICES)
+                             verbose_name='Цвет', choices=COLOR_CHOICES, unique=False)
     slug = models.SlugField(unique=True, verbose_name='SLUG',
                             max_length=settings.MAX_LENGTH_NAME)
 
