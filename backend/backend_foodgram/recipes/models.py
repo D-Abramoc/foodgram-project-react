@@ -7,7 +7,7 @@ from .validators import validate_minimum, validate_string
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=settings.MAX_LENGTH_NAME,
-                            verbose_name='Название', unique=True)
+                            verbose_name='Название')
     measure = models.CharField(max_length=settings.MAX_LENGTH_MEASURE,
                                verbose_name='Единицы измерения')
 
@@ -15,6 +15,10 @@ class Ingredient(models.Model):
         ordering = ('name',)
         verbose_name = 'ингредиент'
         verbose_name_plural = 'ингредиенты'
+        constraints = [
+            models.UniqueConstraint(fields=('name', 'measure'),
+                                    name='unique_together_name_measure')
+        ]
 
     def __str__(self):
         return self.name
