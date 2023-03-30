@@ -21,13 +21,15 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    # image: abramovdmitry/foodgram_front:latest
-    # restart: always
+    # build:
+    #   context: ../frontend
+    #   dockerfile: Dockerfile
+    image: abramovdmitry/foodgram_front:latest
+    restart: always
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - db
 
   nginx:
     image: nginx:1.19.3
