@@ -7,7 +7,7 @@ services:
     volumes:
       - db_value:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - .env
 
   web:
     build: ../backend/backend_foodgram/
@@ -18,14 +18,10 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - .env
 
   frontend:
-    # build:
-    #   context: ../frontend
-    #   dockerfile: Dockerfile
     image: abramovdmitry/foodgram_front:latest
-    restart: always
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
