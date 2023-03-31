@@ -68,8 +68,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             sudo docker-compose stop
-            sudo docker-compose rm web -y
-            sudo docker image prune -a
+            sudo docker-compose rm web
+            sudo docker pull gusic/foodgram_back
             rm .env
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
