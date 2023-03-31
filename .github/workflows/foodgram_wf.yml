@@ -69,7 +69,7 @@ jobs:
           script: |
             sudo docker-compose stop
             sudo docker-compose rm web -y
-            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/foodgram_back:latest
+            sudo docker image prune -a
             rm .env
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
