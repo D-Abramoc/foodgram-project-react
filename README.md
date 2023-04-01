@@ -21,15 +21,10 @@ http://84.201.155.156/
 github.com/D-Abramoc/foodgram-project-react.git
 ```
 - В своем репозитории перейти на вкладку Settings:
-![Tap on Settings](images/settings-min.png)
-1. Нажать Secrets and variables:
-![Tap Secrets and variables](images/tap-to-secrets-and-variables-min.png)
-2. В открывшемся списке нажать Actions:
-![Tap to Actions](images/tap-to-actions-min.png)
-3. Нажать New repository secret:
-![Tap New repository secret](images/tap-new-repository-secret-min.png)
-4. Создать переменную из файла .secrets.sample:
-![Add secret](images/add-secret-min.png)
+1. Нажать Secrets and variables.
+2. В открывшемся списке нажать Actions.
+3. Нажать New repository secret.
+4. Создать переменную из файла .secrets.sample.
 - Повторить шаги 3 и 4 для каждой переменной.
 - Скопировать из папки infra файлы docker-compose.yml и nginx.conf на ваш сервер в папку /home/<ваш-юзернейм>/:
 ```
@@ -56,10 +51,16 @@ sudo docker-compose exec web python manage.py collectstatic
 ```
 sudo docker-compose exec web python manage.py upload
 ```
+- Создайте администратора для доступа в админ панель
+```
+sudo docker-compose exec web python manage.py createsuperuser
+```
+- Зайдите в админ панель по адресу
+```
+http://84.201.155.156/admin/
+```
+создайте хотя бы один тег.
+- Приложение готово к работе!
 
-- Открыть описание API проекта по адресу:
-```
-http://<ip-of-your-server>/redoc/
-```
 ## Автор
 ![Me](image/me.JPG)
