@@ -10,4 +10,6 @@ class AtLeastOneFormSet(BaseInlineFormSet):
             if form.cleaned_data:
                 non_empty_forms += 1
         if non_empty_forms - len(self.deleted_forms) < 1:
-            raise ValidationError("Please fill at least one form.")
+            raise ValidationError(
+                'У рецепта должен быть минимум один ингредиент'
+            )
