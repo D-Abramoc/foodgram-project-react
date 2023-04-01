@@ -10,8 +10,7 @@ class Command(management.base.BaseCommand):
 
     def handle(self, *args, **kwargs):
         path_to_data = (
-            '/home/dmitry/Dev/Diploma/'
-            'foodgram-project-react/data/ingredients.csv'
+            '/app/data/ingredients.csv'
         )
         with open(path_to_data, encoding='utf8') as f:
             reader = csv.reader(f)
