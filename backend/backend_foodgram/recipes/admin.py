@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models import Sum
 
-from .forms import RequiredInlineFormSet
+from .forms import AtLeastOneFormSet
 from .models import (FavoriteRecipe, Ingredient, Quantity, Recipe,
                      ShoppingCart, Tag)
 
@@ -9,7 +9,7 @@ from .models import (FavoriteRecipe, Ingredient, Quantity, Recipe,
 class QuantityInLine(admin.TabularInline):
     model = Quantity
     extra = 1
-    formset = RequiredInlineFormSet
+    formset = AtLeastOneFormSet
 
 
 @admin.register(Recipe)
