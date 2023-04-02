@@ -12,7 +12,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = ['84.201.155.156', '127.0.0.1',
-                 'web', '158.160.60.18']
+                 'web', '158.160.60.18',
+                 'cooking.sytes.net']
 
 CSRF_TRUSTED_ORIGINS = ['http://*.158.160.60.18/', 'http://*.127.0.0.1',
                         'http://*.84.201.155.156']
