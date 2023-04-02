@@ -16,7 +16,7 @@ ALLOWED_HOSTS = ['84.201.155.156', '127.0.0.1',
                  'cooking.sytes.net']
 
 CSRF_TRUSTED_ORIGINS = ['http://*.158.160.60.18/', 'http://*.127.0.0.1',
-                        'http://*.84.201.155.156']
+                        'http://*.84.201.155.156', 'http://*.cooking.sytes.net']
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000'
