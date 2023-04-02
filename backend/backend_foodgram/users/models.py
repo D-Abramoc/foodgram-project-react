@@ -22,7 +22,7 @@ class CustomUser(AbstractUser):
         max_length=settings.MAX_LENGTH_CHARFIELD_CUSTOMUSER
     )
     REQUIRED_FIELDS = ('first_name', 'last_name')
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
 
     class Meta:
         ordering = ('username',)
