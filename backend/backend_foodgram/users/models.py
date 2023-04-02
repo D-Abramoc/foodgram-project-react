@@ -21,7 +21,7 @@ class CustomUser(AbstractUser):
     password = models.CharField(
         max_length=settings.MAX_LENGTH_CHARFIELD_CUSTOMUSER
     )
-    REQUIRED_FIELDS = ('first_name', 'last_name')
+    REQUIRED_FIELDS = ('first_name', 'last_name', 'username')
     USERNAME_FIELD = 'email'
 
     class Meta:
