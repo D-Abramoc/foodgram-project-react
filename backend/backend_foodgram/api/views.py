@@ -162,15 +162,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
                   .filter(recipes__in=request.user.shoppingcart.recipes.all())
                   .values('name', measure=F('measure'))
                   .annotate(ingredient_sum=Sum('quantity__amount')))
-        # with open('result.txt', 'w') as f:
         shopping_list = []
         for item in result:
             shopping_list.append(
                 f'{item["name"]}: {item["ingredient_sum"]} '
                 f'{item["measure"]}\n')
-            # key, value = item.values()
-            # row = f'{key}: {value}\n'
-        # f = open('result.txt', 'r')
         response = HttpResponse(
             shopping_list, content_type='text.txt; charset=utf-8'
         )
