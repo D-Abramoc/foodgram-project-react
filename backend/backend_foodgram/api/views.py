@@ -1,4 +1,4 @@
-from django.db.models import Count, Sum
+from django.db.models import Count, F, Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -160,14 +160,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         result = (Ingredient.objects.values('name')
                   .filter(recipes__in=request.user.shoppingcart.recipes.all())
+                  .values('name', measure=F('measure'))
                   .annotate(ingredient_sum=Sum('quantity__amount')))
-        with open('result.txt', 'w') as f:
-            for item in result:
-                key, value = item.values()
-                row = f'{key}: {value}\n'
-                f.write(row)
-        f = open('result.txt', 'r')
-        response = HttpResponse(f, content_type='text.txt; charset=utf-8')
+        # with open('result.txt', 'w') as f:
+        shopping_list = []
+        for item in result:
+            shopping_list.append(
+                f'{item["name"]}: {item["ingredient_sum"]} '
+                f'{item["measure"]}\n')
+            # key, value = item.values()
+            # row = f'{key}: {value}\n'
+        # f = open('result.txt', 'r')
+        response = HttpResponse(
+            shopping_list, content_type='text.txt; charset=utf-8'
+        )
         filename = 'shoppinglist.txt'
         response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
