@@ -1,4 +1,5 @@
 from django.db.models import Count, Sum
+from django.http.response import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
@@ -166,8 +167,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 row = f'{key}: {value}\n'
                 f.write(row)
         f = open('result.txt', 'r')
-        return Response(f, content_type='text/plane',
-                        status=status.HTTP_200_OK)
+        response = HttpResponse(f, content_type='text.txt; charset=utf-8')
+        filename = 'shoppinglist.txt'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
