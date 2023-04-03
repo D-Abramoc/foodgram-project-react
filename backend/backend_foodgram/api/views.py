@@ -170,7 +170,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response = HttpResponse(f, content_type='text.txt; charset=utf-8')
         filename = 'shoppinglist.txt'
         response['Content-Disposition'] = f'attachment; filename={filename}'
-        return Response(response, status=status.HTTP_200_OK)
+        return response
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
